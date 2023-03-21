@@ -2,10 +2,10 @@
     "chain_name": "nibiru-itn-1",
     "coingecko": "nibiru",
     "api": [
-        "https://lcd.itn-1.nibiru.fi"
+        "https://lcd.archive.itn-1.nibiru.fi"
     ],
     "rpc": [
-        "https://rpc.itn-1.nibiru.fi"
+        "https://rpc.archive.itn-1.nibiru.fi"
     ],
     "snapshot_provider": "5e10f6f7a0eca8b8cd0d2b4b0cfd3ae66ae0019e@35.231.18.201:26656,f202744e2098cbf3c2fa512b1296463698787ba4@34.73.90.116:26656",
     "sdk_version": "0.45.12",
