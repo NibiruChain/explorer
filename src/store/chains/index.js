@@ -15,9 +15,20 @@ const configs = []
 const PLAYGROUND_NETWORKS = 'https://networks.play.nibiru.fi/ping-pub'
 const DEV_NETWORKS = 'https://networks.testnet.nibiru.fi/ping-pub'
 const ITN_NETWORKS = 'https://networks.itn.nibiru.fi/ping-pub'
+const ITN2_NETWORKS = 'https://networks.itn2.nibiru.fi/ping-pub'
 
 try {
   const testnets = await fetch(ITN_NETWORKS).then(response => response.json())
+  testnets.forEach((_, i) => {
+    testnets[i].visible = true
+  })
+  configs.push(...testnets)
+} catch (error) {
+  console.log(error)
+}
+
+try {
+  const testnets = await fetch(ITN2_NETWORKS).then(response => response.json())
   testnets.forEach((_, i) => {
     testnets[i].visible = true
   })
