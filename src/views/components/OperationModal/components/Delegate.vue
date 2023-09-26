@@ -226,8 +226,9 @@ export default {
     },
     setupBalance() {
       if (this.balance && this.balance.length > 0) {
-        this.token = this.balance[0].denom
-        return this.balance
+        console.log(this.balance)
+        this.token = this.balance.filter(x => x.denom === 'unibi')[0].denom
+        return this.balance.filter(x => x.denom === 'unibi')
       }
       return []
     },
