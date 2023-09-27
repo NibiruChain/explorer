@@ -13,9 +13,7 @@ jobs:
         with:
           node-version: 16
           cache: "yarn"
-      - uses: borales/actions-yarn@v3.0.0
-        with:
-          cmd: global add node-gyp
+
       - uses: borales/actions-yarn@v3.0.0
         with:
           cmd: install --ignore-engines
