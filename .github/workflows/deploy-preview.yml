@@ -8,17 +8,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache node_modules
-        uses: actions/cache@v2
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
         with:
-          path: node_modules
-          key: node_modules-${{ hashFiles('**/yarn.lock') }}
+          node-version: 16.x
 
-      - uses: borales/actions-yarn@v3.0.0
+      - name: Run install
+        uses: borales/actions-yarn@v4
         with:
           cmd: install --ignore-engines
 
-      - uses: borales/actions-yarn@v3.0.0
+      - uses: borales/actions-yarn@v4
         with:
           cmd: build
 
