@@ -213,6 +213,7 @@ function selected(route: any, nav: NavLink) {
         </div>
         <a
           href="https://osmosis.zone"
+          rel="noopener"
           target="_blank"
           class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
@@ -229,6 +230,7 @@ function selected(route: any, nav: NavLink) {
         <a
           href="https://becole.com"
           target="_blank"
+          rel="noopener"
           class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <img
@@ -260,6 +262,7 @@ function selected(route: any, nav: NavLink) {
         <a
           href="https://twitter.com/ping_pub"
           target="_blank"
+          rel="noopener"
           class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:twitter" class="text-xl mr-2" />
@@ -273,6 +276,7 @@ function selected(route: any, nav: NavLink) {
           v-if="showDiscord"
           href="https://discord.com/invite/CmjYVSr6GW"
           target="_blank"
+          rel="noopener"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:discord" class="text-xl mr-2" />
@@ -285,6 +289,7 @@ function selected(route: any, nav: NavLink) {
         <a
           href="https://github.com/ping-pub/explorer/discussions"
           target="_blank"
+          rel="noopener"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:frequently-asked-questions" class="text-xl mr-2" />
