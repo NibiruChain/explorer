@@ -338,9 +338,9 @@ export const useDashboard = defineStore('dashboard', {
               ...nibiruChains,
             }
           : {
-              // ...import.meta.glob('../../chains/testnet/*.json', {
-              //   eager: true,
-              // }),
+              ...import.meta.glob('../../chains/testnet/*.json', {
+                eager: true,
+              }),
               ...nibiruChains,
             };
       Object.values<LocalConfig>(source).forEach((x: LocalConfig) => {
@@ -360,9 +360,9 @@ export const useDashboard = defineStore('dashboard', {
               ...nibiruChains,
             }
           : {
-              // ...import.meta.glob('../../chains/testnet/*.json', {
-              //   eager: true,
-              // }),
+              ...import.meta.glob('../../chains/testnet/*.json', {
+                eager: true,
+              }),
               ...nibiruChains,
             };
       Object.values<LocalConfig>(source).forEach((x: LocalConfig) => {
