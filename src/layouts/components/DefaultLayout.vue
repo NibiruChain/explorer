@@ -67,7 +67,7 @@ function selected(route: any, nav: NavLink) {
     >
       <div class="flex justify-between mt-1 pl-4 py-4 mb-1">
         <RouterLink to="/" class="flex items-center pr-8">
-          <img class="h-full w-full" src="../../assets/logo.svg" />
+          <img class="h-full w-full" src="../../assets/logo.svg" alt="logo" />
         </RouterLink>
         <div
           class="pr-4 cursor-pointer xl:!hidden"
@@ -312,7 +312,6 @@ function selected(route: any, nav: NavLink) {
 
         <div class="flex-1 w-0"></div>
 
-        <!-- <NavSearchBar />-->
         <NavBarI18n class="hidden md:!inline-block" />
         <NavbarThemeSwitcher class="!inline-block" />
         <NavbarSearch class="!inline-block" />

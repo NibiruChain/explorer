@@ -356,7 +356,6 @@ async function loadBalances(endpoint: string, address: string) {
         </RouterLink>
       </div>
     </div>
-    <!-- Put this part before </body> tag -->
     <div class="modal" id="address-modal">
       <div class="modal-box">
         <a href="#" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</a>

@@ -523,7 +523,7 @@ function pageload(p: number) {
               {{ $t('account.height') }}
             </th>
             <th class="text-left pl-4">{{ $t('account.hash') }}</th>
-            <th class="text-left pl-4" width="40%">{{ $t('account.messages') }}</th>
+            <th class="text-left pl-4 w-[40%]">{{ $t('account.messages') }}</th>
             <th class="text-left pl-4">{{ $t('account.time') }}</th>
           </thead>
           <tbody>
@@ -551,7 +551,7 @@ function pageload(p: number) {
                   <Icon v-else icon="mdi-multiply" class="text-no" />
                 </div>
               </td>
-              <td width="150">{{ format.toDay(item.timestamp, 'from') }}</td>
+              <td class="w-[150%]">{{ format.toDay(item.timestamp, 'from') }}</td>
             </tr>
           </tbody>
         </table>

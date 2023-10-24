@@ -159,12 +159,6 @@ async function update() {
     <div class="bg-base-100 px-4 pt-3 pb-4 rounded shadow">
       <div class="form-control">
         <label class="input-group input-group-md w-full flex">
-          <!-- <input
-            type="text"
-            placeholder="Button on both side"
-            class="input input-bordered input-md w-full"
-            v-model="rpc"
-          /> -->
           <select v-model="rpc" class="select select-bordered w-full flex-1">
             <option v-for="(item, index) in rpcList" :key="index">
               {{ item?.address }}/consensus_state

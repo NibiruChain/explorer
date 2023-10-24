@@ -64,7 +64,7 @@ const list = computed(() => {
                         <td class="text-sm text-primary">
                             <RouterLink :to="`/${props.chain}/block/${item.height}`">{{ item.height }}</RouterLink>
                         </td>
-                        <td class="truncate text-primary" width="50%">
+                        <td class="truncate text-primary w-[50%]">
                             <RouterLink :to="`/${props.chain}/tx/${item.hash}`">{{
                                 item.hash
                             }}</RouterLink>

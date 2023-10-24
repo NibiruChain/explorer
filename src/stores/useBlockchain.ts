@@ -22,7 +22,6 @@ import {
   useWalletStore,
 } from '.';
 import { useBlockModule } from '@/modules/[chain]/block/block';
-import { DEFAULT } from '@/libs';
 import { hexToRgb, rgbToHsl } from '@/libs/utils';
 
 export const useBlockchain = defineStore('blockchain', {
@@ -65,7 +64,7 @@ export const useBlockchain = defineStore('blockchain', {
         if (this.current?.themeColor) {
           const { color } = hexToRgb(this.current?.themeColor);
           const { h, s, l } = rgbToHsl(color);
-          const themeColor = h + ' ' + s + '% ' + l +'%';
+          const themeColor = h + ' ' + s + '% ' + l + '%';
           document.body.style.setProperty('--p', `${themeColor}`);
           // document.body.style.setProperty('--p', `${this.current?.themeColor}`);
         } else {

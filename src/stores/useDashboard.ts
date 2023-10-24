@@ -374,13 +374,13 @@ export const useDashboard = defineStore('dashboard', {
       if (this.length > 0) {
         const blockchain = useBlockchain();
         const keys = Object.keys(this.favoriteMap);
-        for (let i = 0; i < keys.length; i++) {
+        for (const element of keys) {
           if (
             !blockchain.chainName &&
-            this.chains[keys[i]] &&
-            this.favoriteMap[keys[i]]
+            this.chains[element] &&
+            this.favoriteMap[element]
           ) {
-            blockchain.setCurrent(keys[i]);
+            blockchain.setCurrent(element);
             break;
           }
         }

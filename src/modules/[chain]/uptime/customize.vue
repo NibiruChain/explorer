@@ -183,7 +183,6 @@ function color(v: string) {
       <label for="add-validator" class="btn btn-primary mt-5">{{ $t('uptime.add_validators') }}</label>
     </div>
 
-    <!-- Put this part before </body> tag -->
     <input type="checkbox" id="add-validator" class="modal-toggle" @change="initial" />
     <div class="modal">
       <div class="modal-box relative">
