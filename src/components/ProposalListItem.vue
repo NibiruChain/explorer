@@ -42,6 +42,8 @@ const proposalInfo = ref();
 <template>
   <div class="bg-white dark:bg-[#28334e] rounded text-sm">
     <table class="table-compact w-full table-fixed hidden lg:!table">
+      <caption class="hidden">Proposal List</caption>
+      <th class="hidden"></th>
       <tbody>
         <tr v-for="(item, index) in proposals?.proposals" :key="index">
           <td class="px-4 w-20">
