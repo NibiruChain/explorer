@@ -346,6 +346,7 @@ function updateEvent() {
       </div>
       <div class="overflow-x-auto">
         <table class="table w-full text-sm table-zebra">
+          <caption class="hidden">Rewards</caption>
           <thead>
             <tr>
               <th class="py-3">{{ $t('account.validator') }}</th>
@@ -438,6 +439,7 @@ function updateEvent() {
       <h2 class="card-title mb-4">{{ $t('account.unbonding_delegations') }}</h2>
       <div class="overflow-x-auto">
         <table class="table text-sm w-full">
+          <caption class="hidden">unbounding Delegations</caption>
           <thead>
             <tr>
               <th class="py-3">{{ $t('account.creation_height') }}</th>
@@ -497,6 +499,7 @@ function updateEvent() {
       <h2 class="card-title mb-4">{{ $t('account.transactions') }}</h2>
       <div class="overflow-x-auto">
         <table class="table w-full text-sm">
+          <caption class="hidden">Transactions</caption>
           <thead>
             <tr>
               <th class="py-3">{{ $t('account.height') }}</th>

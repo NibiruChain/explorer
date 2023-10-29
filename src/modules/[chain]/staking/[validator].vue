@@ -187,6 +187,7 @@ function pageload(p: number) {
                   v-if="avatars[identity] !== 'undefined'"
                   v-lazy="logo(identity)"
                   class="object-contain"
+                  alt="avatar"
                 />
                 <Icon
                   v-else
@@ -492,6 +493,7 @@ function pageload(p: number) {
       </div>
       <div class="rounded overflow-auto">
         <table class="table validatore-table w-full">
+          <caption class="hidden">Validators</caption>
           <thead>
             <th class="text-left pl-4" style="position: relative; z-index: 2">
               {{ $t('account.delegator') }}
@@ -518,6 +520,7 @@ function pageload(p: number) {
       <div class="text-lg mb-4 font-semibold">{{ $t('account.transactions') }}</div>
       <div class="rounded overflow-auto">
         <table class="table validatore-table w-full">
+          <caption class="hidden">Validators</caption>
           <thead>
             <th class="text-left pl-4" style="position: relative; z-index: 2">
               {{ $t('account.height') }}

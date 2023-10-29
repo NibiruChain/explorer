@@ -112,6 +112,7 @@ function selected(route: any, nav: NavLink) {
               v-if="item?.icon?.image"
               :src="item?.icon?.image"
               class="w-6 h-6 rounded-full mr-3"
+              alt="icon"
             />
             <div
               class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap"
@@ -150,6 +151,7 @@ function selected(route: any, nav: NavLink) {
                 <img
                   v-if="el?.icon?.image"
                   :src="el?.icon?.image"
+                  alt="el-icon"
                   class="w-6 h-6 rounded-full mr-3 ml-4 " :class="{
                   'border border-gray-300 bg-white': selected($route, el),
                 }"
@@ -186,6 +188,7 @@ function selected(route: any, nav: NavLink) {
             v-if="item?.icon?.image"
             :src="item?.icon?.image"
             class="w-6 h-6 rounded-full mr-3 border border-blue-100"
+            alt="listed-icon"
           />
           <div
             class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap"
@@ -219,6 +222,7 @@ function selected(route: any, nav: NavLink) {
         >
           <img
             src="https://ping.pub/logos/osmosis.jpg"
+            alt="osmosis-logo"
             class="w-6 h-6 rounded-full mr-3"
           />
           <div
@@ -235,6 +239,7 @@ function selected(route: any, nav: NavLink) {
         >
           <img
             src="https://becole.com/static/logo/logo_becole.png"
+            alt="becole-logo"
             class="w-6 h-6 rounded-full mr-3"
           />
           <div

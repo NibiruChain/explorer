@@ -163,6 +163,8 @@ const result = ref('');
         <div class="bg-base-100 px-4 pt-3 pb-4 rounded mb-4 shadow">
             <h2 class="card-title truncate w-full mt-4">Transactions</h2>
             <table class="table">
+                <caption class="hidden">Transactions</caption>
+                <th class="hidden"></th>
                 <thead>
                     <tr>
                         <td> {{ $t('ibc.height') }}</td>
@@ -223,6 +225,8 @@ const result = ref('');
                         </div>
                         <div class="overflow-auto">
                             <table class="table table-compact w-full text-sm">
+                                <caption class="hidden">contracts states</caption>
+                                <th class="hidden"></th>
                                 <tr v-for="(v, index) in state.models" :key="index" class="hover">
                                     <td class="" :data-tip="format.hexToString(v.key)">
                                         <span class="font-bold">{{ format.hexToString(v.key) }}</span>

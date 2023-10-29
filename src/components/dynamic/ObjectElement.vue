@@ -6,6 +6,8 @@ const props = defineProps(['value']);
 <template>
   <div class="overflow-auto">
     <table class="table table-compact w-full text-sm">
+      <caption class="hidden">List Table</caption>
+      <th class="hidden"></th>
       <tbody>
         <tr v-for="(v, k) of value">
           <td

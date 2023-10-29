@@ -268,6 +268,7 @@ loadAvatars();
         <div class="bg-base-100 px-4 pt-3 pb-4 rounded shadow">
             <div class="overflow-x-auto">
                 <table class="table staking-table w-full">
+                    <caption class="hidden">Validators</caption>
                     <thead>
                         <tr>
                             <th
@@ -320,6 +321,7 @@ loadAvatars();
                                                 v-if="logo"
                                                 :src="logo"
                                                 class="object-contain"
+                                                alt="logo"
                                             />
                                             <Icon
                                                 v-else

@@ -38,6 +38,7 @@ function myContracts() {
         </div>
         <div class="overflow-x-auto">
             <table class="table table-compact w-full mt-4 text-sm">
+                <caption class="hidden">contracts</caption>
                 <thead>
                     <tr>
                         <th>{{ $t('cosmwasm.code_id') }}</th>

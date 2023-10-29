@@ -340,6 +340,8 @@ function pageload(p: number) {
       <h2 class="card-title">{{ $t('gov.votes') }}</h2>
       <div class="overflow-x-auto">
         <table class="table w-full table-zebra">
+          <caption class="hidden">Proposals</caption>
+          <th class="hidden"></th>
           <tbody>
             <tr v-for="(item, index) of votes" :key="index">
               <td class="py-2 text-sm">{{ showValidatorName(item.voter) }}</td>

@@ -70,6 +70,8 @@ onBeforeRouteUpdate(async (to, from, next) => {
         </div>
         <div class="pt-10 flex justify-center">
           <table class="table w-max rounded-lg bg-base-100">
+            <caption class="hidden">List Table</caption>
+            <th class="hidden"></th>
             <tbody>
               <tr class="hover cursor-pointer" @click="edit = !edit">
                 <td>{{ $t('block.countdown_for_block') }}:</td>
