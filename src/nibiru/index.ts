@@ -53,8 +53,8 @@ export const getNibiruChains = async (): Promise<{
   [key: string]: LocalConfig;
 }> => {
   const [playnets, devnets, itn] = await Promise.all([
-    getPlaynets(),
-    getDevnets(),
+    undefined, //getPlaynets(),
+    undefined, //getDevnets(),
     getItn(),
   ]);
   const chains = (itn ?? []).concat(playnets ?? [], devnets ?? []);
