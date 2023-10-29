@@ -321,6 +321,7 @@ const amount = computed({
 
       <div v-if="walletStore.delegations.length > 0" class="px-4 pb-4 overflow-auto">
         <table class="table table-compact w-full table-zebra">
+          <caption class="hidden">Delegations</caption>
           <thead>
             <tr>
               <th>{{ $t('account.validator') }}</th>

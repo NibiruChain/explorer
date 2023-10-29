@@ -256,6 +256,7 @@ const currencySign = computed(() => {
 
       <div class="overflow-x-auto mt-4">
         <table class="table w-full">
+          <caption class="hidden">Portfolio</caption>
           <thead class="bg-base-200">
             <tr>
               <th>Token</th>

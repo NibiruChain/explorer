@@ -205,6 +205,8 @@ function fetchAllKeyRotation() {
 
       <div :class="tab === '3' ? '' : 'hidden'" class="overflow-x-auto">
         <table class="table table-compact w-full mt-5">
+          <caption class="hidden">Uptime</caption>
+          <th class="hidden"></th>
           <thead class="capitalize">
             <tr>
               <td>{{ $t('account.validator') }}</td>

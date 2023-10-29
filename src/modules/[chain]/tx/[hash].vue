@@ -31,6 +31,8 @@ const messages = computed(() => {
             <h2 class="card-title truncate mb-2">{{ $t('tx.title') }}</h2>
             <div class="overflow-auto-x">
                 <table class="table text-sm">
+                    <caption class="hidden">Txs</caption>
+                    <th class="hidden"></th>
                     <tbody>
                         <tr>
                             <td>{{ $t('tx.tx_hash') }}</td>

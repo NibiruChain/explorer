@@ -147,6 +147,7 @@ function color(v: string) {
         </div>
       </div>
       <table class="table table-compact w-full">
+        <caption class="hidden">Validators</caption>
         <thead>
           <tr>
             <th>{{ $t('uptime.no') }}</th>
@@ -201,6 +202,7 @@ function color(v: string) {
         <div class="py-4 max-h-60 overflow-y-auto">
           
           <table class="table table-compact w-full hover">
+            <caption class="hidden">Validators</caption>
             <thead>
               <tr><th>{{ $t('account.validator') }}</th><th></th></tr>
             </thead>
