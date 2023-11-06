@@ -61,13 +61,6 @@ export const getNibiruChains = async (): Promise<{
   const chainsObj: { [key: string]: LocalConfig } = {};
   chains.forEach((chain) => {
     chainsObj[chain.chain_name] = chain;
-    // if (Array.isArray(chain.assets)) {
-    //   chain.assets.forEach((x) => {
-    //     if (x.coingecko_id && x.coingecko_id !== '') {
-    //       coingecko[x.coingecko_id] = String(x.symbol).toUpperCase();
-    //     }
-    //   });
-    // }
   });
   return chainsObj;
 };
