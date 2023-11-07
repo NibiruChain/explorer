@@ -265,7 +265,7 @@ function selected(route: any, nav: NavLink) {
 
         <div class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase">{{ $t('module.links') }}</div>
         <a
-          href="https://twitter.com/ping_pub"
+          href="https://twitter.com/NibiruChain"
           target="_blank"
           rel="noopener"
           class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
@@ -279,7 +279,7 @@ function selected(route: any, nav: NavLink) {
         </a>
         <a
           v-if="showDiscord"
-          href="https://discord.com/invite/CmjYVSr6GW"
+          href="https://discord.gg/NptQm9sZ"
           target="_blank"
           rel="noopener"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
@@ -292,7 +292,7 @@ function selected(route: any, nav: NavLink) {
           </div>
         </a>
         <a
-          href="https://github.com/ping-pub/explorer/discussions"
+          href="https://nibiru.fi/docs/learn/faq.html"
           target="_blank"
           rel="noopener"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
