@@ -5,9 +5,7 @@ const DEV_NETWORKS = 'https://networks.testnet.nibiru.fi/ping-pub';
 const ITN_NETWORKS = 'https://networks.itn.nibiru.fi/ping-pub';
 const MAIN_NETWORK = 'https://networks.nibiru.fi/ping-pub';
 
-export const getNetwork = async (
-  url: string
-): Promise<LocalConfig[] | undefined> => {
+export const getNetwork = async (url: string): Promise<LocalConfig[]> => {
   try {
     const net = await fetch(url).then((response) => response.json());
     net.forEach((_: any, i: string | number) => {
@@ -16,7 +14,7 @@ export const getNetwork = async (
     return net;
   } catch (error) {
     console.log(error);
-    return;
+    return [];
   }
 };
 
@@ -27,7 +25,7 @@ export const getNibiruChains = async (): Promise<{
     getNetwork(ITN_NETWORKS),
     getNetwork(MAIN_NETWORK),
   ]);
-  const chains = (main ?? []).concat(itn ?? []);
+  const chains = main.concat(itn);
   const chainsObj: { [key: string]: LocalConfig } = {};
   chains.forEach((chain) => {
     chainsObj[chain.chain_name] = chain;
