@@ -260,7 +260,7 @@ export const useDashboard = defineStore('dashboard', {
   state: () => {
     const favMap = JSON.parse(
       localStorage.getItem('favoriteMap') ??
-        '{"cosmos":true, "osmosis":true, "nibiru":true, "nibiru-itn-3":true}'
+        '{"cosmos":true,"osmosis":true,"nibiru":true,"nibiru-itn-3":true,"cataclysm-1":true,"nibiru-testnet-1":true}'
     );
     return {
       status: LoadingStatus.Empty,

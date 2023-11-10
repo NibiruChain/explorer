@@ -3,46 +3,17 @@ import type { LocalConfig } from '@/stores';
 const PLAYGROUND_NETWORKS = 'https://networks.play.nibiru.fi/ping-pub';
 const DEV_NETWORKS = 'https://networks.testnet.nibiru.fi/ping-pub';
 const ITN_NETWORKS = 'https://networks.itn.nibiru.fi/ping-pub';
+const MAIN_NETWORK = 'https://networks.nibiru.fi/ping-pub';
 
-export const getItn = async (): Promise<LocalConfig[] | undefined> => {
+export const getNetwork = async (
+  url: string
+): Promise<LocalConfig[] | undefined> => {
   try {
-    const testnets = await fetch(ITN_NETWORKS).then((response) =>
-      response.json()
-    );
-    testnets.forEach((_: any, i: string | number) => {
-      testnets[i].visible = true;
+    const net = await fetch(url).then((response) => response.json());
+    net.forEach((_: any, i: string | number) => {
+      net[i].visible = true;
     });
-    return testnets;
-  } catch (error) {
-    console.log(error);
-    return;
-  }
-};
-
-export const getDevnets = async (): Promise<LocalConfig[] | undefined> => {
-  try {
-    const devnets = await fetch(DEV_NETWORKS).then((response) =>
-      response.json()
-    );
-    devnets.forEach((_: any, i: string | number) => {
-      devnets[i].visible = false;
-    });
-    return devnets;
-  } catch (error) {
-    console.log(error);
-    return;
-  }
-};
-
-export const getPlaynets = async (): Promise<LocalConfig[] | undefined> => {
-  try {
-    const playnets = await fetch(PLAYGROUND_NETWORKS).then((response) =>
-      response.json()
-    );
-    playnets.forEach((_: any, i: string | number) => {
-      playnets[i].visible = false;
-    });
-    return playnets;
+    return net;
   } catch (error) {
     console.log(error);
     return;
@@ -52,12 +23,13 @@ export const getPlaynets = async (): Promise<LocalConfig[] | undefined> => {
 export const getNibiruChains = async (): Promise<{
   [key: string]: LocalConfig;
 }> => {
-  const [playnets, devnets, itn] = await Promise.all([
+  const [playnets, devnets, itn, main] = await Promise.all([
     undefined, //getPlaynets(),
     undefined, //getDevnets(),
-    getItn(),
+    getNetwork(ITN_NETWORKS),
+    getNetwork(MAIN_NETWORK),
   ]);
-  const chains = (itn ?? []).concat(playnets ?? [], devnets ?? []);
+  const chains = (main ?? []).concat(itn ?? [], playnets ?? [], devnets ?? []);
   const chainsObj: { [key: string]: LocalConfig } = {};
   chains.forEach((chain) => {
     chainsObj[chain.chain_name] = chain;
