@@ -1,8 +1,8 @@
 import type { LocalConfig } from '@/stores';
 
 const PLAYGROUND_NETWORKS = 'https://networks.play.nibiru.fi/ping-pub';
-const DEV_NETWORKS = 'https://networks.testnet.nibiru.fi/ping-pub';
-const ITN_NETWORKS = 'https://networks.itn.nibiru.fi/ping-pub';
+const DEV_NETWORKS = 'https://networks.devnet.nibiru.fi/ping-pub';
+const ITN_NETWORKS = 'https://networks.testnet.nibiru.fi/ping-pub';
 const MAIN_NETWORK = 'https://networks.nibiru.fi/ping-pub';
 
 export const getNetwork = async (url: string): Promise<LocalConfig[]> => {
