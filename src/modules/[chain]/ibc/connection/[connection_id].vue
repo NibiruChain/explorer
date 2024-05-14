@@ -52,7 +52,12 @@ function loadChannel(channel: string, port: string) {
 }
 
 function pageload(pageNum: number) {
-  fetchSendingTxs(channel_id.value, port_id.value, pageNum -1)
+  if (direction.value === 'In') {
+    fetchSendingTxs(channel_id.value, port_id.value, pageNum -1)
+  } else {
+    fetchSendingTxs(channel_id.value, port_id.value, pageNum -1)
+  }
+
 }
 
 function fetchSendingTxs(channel: string, port: string, pageNum = 0) {
@@ -128,8 +133,6 @@ function color(v: string) {
         clientState.client_state?.['@type'] }}</span></h2>
       <div class="overflow-x-auto grid grid-cols-1 md:grid-cols-2 gap-4">
         <table class="table table-sm capitalize">
-          <caption class="hidden">Connections</caption>
-          <th class="hidden"></th>
           <thead class="bg-base-200">
             <tr>
               <td colspan="3">{{ $t('ibc.trust_parameters') }}</td>
@@ -167,8 +170,6 @@ function color(v: string) {
           </tbody>
         </table>
         <table class="table table-sm text-sm w-full capitalize">
-          <caption class="hidden">Connections</caption>
-          <th class="hidden"></th>
           <thead class="bg-base-200">
             <tr>
               <td colspan="2">{{ $t('ibc.upgrade_parameters') }}</td>
@@ -200,7 +201,6 @@ function color(v: string) {
       <h2 class="card-title">{{ $t('ibc.channels') }}</h2>
       <div class="overflow-auto">
         <table class="table w-full mt-4">
-          <caption class="hidden">Connections</caption>
           <thead>
             <tr>
               <th>{{ $t('ibc.txs') }}</th>
@@ -277,8 +277,6 @@ function color(v: string) {
     <div v-if="channel_id">
       <h3 class=" card-title capitalize">Transactions ({{ channel_id }} {{ port_id }} {{ direction }}) </h3>
       <table class="table">
-        <caption class="hidden">Transactions</caption>
-        <th class="hidden"></th>
         <thead>
           <tr>
             <td> {{ $t('ibc.height') }}</td>

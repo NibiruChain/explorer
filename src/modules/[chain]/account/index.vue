@@ -55,8 +55,6 @@ function showPubkey(v: any) {
 <template>
     <div class=" overflow-x-auto">
         <table class="table table-compact">
-            <caption class="hidden">List Table</caption>
-            <th class="hidden"></th>
             <thead>
                 <tr>
                     <td>{{ $t('account.type') }}</td>

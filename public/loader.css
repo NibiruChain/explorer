@@ -4,14 +4,8 @@
 
 .loading-logo {
   position: absolute;
-  inset-block-start: 25%;
-  inset-inline-start: calc(50% - 500px);
-}
-
-@media only screen and (max-width: 480px) and (orientation: portrait) {
-  .loading-logo {
-    display: none;
-  }
+  inset-block-start: 40%;
+  inset-inline-start: calc(50% - 75px);
 }
 
 .pre-loading {

@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { get } from '../libs/http';
 import type { Chain, Asset } from '@ping-pub/chain-registry-client/dist/types';
 import { useBlockchain } from './useBlockchain';
-import { getNibiruChains } from '@/nibiru';
 
 export enum EndpointType {
   rpc,
@@ -35,11 +34,11 @@ export interface DirectoryChain {
   display: string;
   explorers:
     | {
-        name?: string;
-        kind?: string;
-        url?: string;
-        tx_page?: string;
-        account_page?: string;
+        name?: string | undefined;
+        kind?: string | undefined;
+        url?: string | undefined;
+        tx_page?: string | undefined;
+        account_page?: string | undefined;
       }[]
     | undefined;
   height: number;
@@ -58,11 +57,12 @@ export interface ChainConfig {
   chainName: string;
   prettyName: string;
   bech32Prefix: string;
+  bech32ConsensusPrefix: string;
   chainId: string;
   coinType: string;
   assets: Asset[];
   themeColor?: string;
-  features?: string[];
+  features?: string[]
   endpoints: {
     rest?: Endpoint[];
     rpc?: Endpoint[];
@@ -77,24 +77,25 @@ export interface ChainConfig {
   exponent: string;
   excludes?: string;
   providerChain: {
-    api: Endpoint[];
+    api: Endpoint[]
   };
   // keplr config
-  keplrFeatures?: string[];
+  keplrFeatures?: string[],
   keplrPriceStep?: {
-    low: number;
-    average: number;
-    high: number;
-  };
+    low: number,
+    average: number,
+    high: number,
+  },
 }
 
 export interface LocalConfig {
   addr_prefix: string;
+  consensus_prefix?: string;
   alias: string;
   api: string[] | Endpoint[];
   provider_chain: {
-    api: string[] | Endpoint[];
-  };
+    api: string[] | Endpoint[]
+  }
   assets: {
     base: string;
     coingecko_id: string;
@@ -112,11 +113,11 @@ export interface LocalConfig {
   registry_name?: string;
   features?: string[];
   keplr_price_step?: {
-    low: number;
-    average: number;
-    high: number;
-  };
-  keplr_features: string[];
+    low: number,
+    average: number,
+    high: number,
+  },
+  keplr_features: string[],
 }
 
 function apiConverter(api: any[]) {
@@ -137,36 +138,39 @@ function apiConverter(api: any[]) {
 
 export function fromLocal(lc: LocalConfig): ChainConfig {
   const conf = {} as ChainConfig;
-  conf.assets = lc.assets.map((x) => ({
-    name: x.base,
-    base: x.base,
-    display: x.symbol,
-    symbol: x.symbol,
-    logo_URIs: { svg: x.logo },
-    coingecko_id: x.coingecko_id,
-    exponent: x.exponent,
-    denom_units: [
-      { denom: x.base, exponent: 0 },
-      { denom: x.symbol.toLowerCase(), exponent: Number(x.exponent) },
-    ],
-  }));
+  if(lc.assets && Array.isArray(lc.assets)) {
+    conf.assets = lc.assets.map((x) => ({
+      name: x.base,
+      base: x.base,
+      display: x.symbol,
+      symbol: x.symbol,
+      logo_URIs: { svg: x.logo },
+      coingecko_id: x.coingecko_id,
+      exponent: x.exponent,
+      denom_units: [
+        { denom: x.base, exponent: 0 },
+        { denom: x.symbol.toLowerCase(), exponent: Number(x.exponent) },
+      ],
+    }));
+  }
   conf.versions = {
-    cosmosSdk: lc.sdk_version,
-  };
+    cosmosSdk: lc.sdk_version
+  }
   conf.bech32Prefix = lc.addr_prefix;
+  conf.bech32ConsensusPrefix = lc.consensus_prefix ?? lc.addr_prefix + 'valcons';
   conf.chainName = lc.chain_name;
   conf.coinType = lc.coin_type;
-  conf.prettyName = lc.registry_name ?? lc.chain_name;
+  conf.prettyName = lc.registry_name || lc.chain_name;
   conf.endpoints = {
     rest: apiConverter(lc.api),
     rpc: apiConverter(lc.rpc),
   };
-  if (lc.provider_chain) {
+  if(lc.provider_chain) {
     conf.providerChain = {
-      api: apiConverter(lc.provider_chain.api),
-    };
+      api: apiConverter(lc.provider_chain.api)
+    }
   }
-  conf.features = lc.features;
+  conf.features = lc.features
   conf.logo = lc.logo;
   conf.keplrFeatures = lc.keplr_features;
   conf.keplrPriceStep = lc.keplr_price_step;
@@ -178,13 +182,14 @@ export function fromDirectory(source: DirectoryChain): ChainConfig {
   const conf = {} as ChainConfig;
   (conf.assets = source.assets),
     (conf.bech32Prefix = source.bech32_prefix),
+    (conf.bech32ConsensusPrefix = source.bech32_prefix + 'valcons'),
     (conf.chainId = source.chain_id),
     (conf.chainName = source.chain_name),
     (conf.prettyName = source.pretty_name),
     (conf.versions = {
-      application: source.versions?.application_version ?? '',
-      cosmosSdk: source.versions?.cosmos_sdk_version ?? '',
-      tendermint: source.versions?.tendermint_version ?? '',
+      application: source.versions?.application_version || '',
+      cosmosSdk: source.versions?.cosmos_sdk_version || '',
+      tendermint: source.versions?.tendermint_version || '',
     }),
     (conf.logo = pathConvert(source.image));
   conf.endpoints = source.best_apis;
@@ -198,7 +203,7 @@ function pathConvert(path: string | undefined) {
       'https://registry.ping.pub'
     );
   }
-  return path ?? '';
+  return path || '';
 }
 
 export function getLogo(
@@ -211,7 +216,7 @@ export function getLogo(
     | undefined
 ) {
   if (conf) {
-    return pathConvert(conf.svg ?? conf.png ?? conf.jpeg);
+    return pathConvert(conf.svg || conf.png || conf.jpeg);
   }
   return undefined;
 }
@@ -254,13 +259,11 @@ export enum ConfigSource {
   Local = 'local',
 }
 
-const nibiruChains = await getNibiruChains();
-
 export const useDashboard = defineStore('dashboard', {
   state: () => {
     const favMap = JSON.parse(
-      localStorage.getItem('favoriteMap') ??
-        '{"nibiru":true,"nibiru-itn-3":true,"nibiru-testnet-1":true}'
+      localStorage.getItem('favoriteMap') ||
+        '{"cosmos":true, "osmosis":true}'
     );
     return {
       status: LoadingStatus.Empty,
@@ -269,10 +272,7 @@ export const useDashboard = defineStore('dashboard', {
       favoriteMap: favMap as Record<string, boolean>,
       chains: {} as Record<string, ChainConfig>,
       prices: {} as Record<string, any>,
-      coingecko: {} as Record<
-        string,
-        { coinId: string; exponent: number; symbol: string }
-      >,
+      coingecko: {} as Record<string, {coinId: string, exponent: number, symbol: string}>,
     };
   },
   getters: {
@@ -281,38 +281,33 @@ export const useDashboard = defineStore('dashboard', {
     },
   },
   actions: {
-    initial() {
-      this.loadingFromLocal();
-      // this.loadingFromRegistry()
+    async initial() {
+      await this.loadingFromLocal();
+      // await this.loadingFromRegistry()
     },
     loadingPrices() {
-      const coinIds = [] as string[];
-      const keys = Object.keys(this.chains); // load all blockchain
+      const coinIds = [] as string[]
+      const keys = Object.keys(this.chains) // load all blockchain
       // Object.keys(this.favoriteMap) //only load favorite once it has too many chains
-      keys.forEach((k) => {
-        if (this.chains[k])
-          this.chains[k].assets.forEach((a) => {
-            if (a.coingecko_id !== undefined && a.coingecko_id.length > 0) {
-              coinIds.push(a.coingecko_id);
-              a.denom_units.forEach((u) => {
-                this.coingecko[u.denom] = {
-                  coinId: a.coingecko_id ?? '',
-                  exponent: u.exponent,
-                  symbol: a.symbol,
-                };
-              });
-            }
-          });
-      });
+      keys.forEach(k => {
+        if(Array.isArray(this.chains[k]?.assets)) this.chains[k].assets.forEach(a => {
+          if(a.coingecko_id !== undefined && a.coingecko_id.length > 0) {
+            coinIds.push(a.coingecko_id)
+            a.denom_units.forEach(u => {
+              this.coingecko[u.denom] = {
+                coinId: a.coingecko_id || '',
+                exponent: u.exponent,
+                symbol: a.symbol
+              }
+            })
+          } 
+        })
+      })
 
-      const currencies = ['usd, cny', 'eur', 'jpy', 'krw', 'sgd', 'hkd'];
-      get(
-        `https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&vs_currencies=${currencies.join(
-          ','
-        )}&ids=${coinIds.join(',')}`
-      ).then((x) => {
-        this.prices = x;
-      });
+      const currencies = ['usd, cny'] // usd,cny,eur,jpy,krw,sgd,hkd
+      get(`https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&vs_currencies=${currencies.join(',')}&ids=${coinIds.join(",")}`).then(x => {
+        this.prices = x
+      })
     },
     async loadingFromRegistry() {
       if (this.status === LoadingStatus.Empty) {
@@ -326,23 +321,13 @@ export const useDashboard = defineStore('dashboard', {
       }
     },
     async loadingFromLocal() {
-      if (window.location.hostname.search('testnet') > -1) {
-        this.networkType = NetworkType.Testnet;
+      if(window.location.hostname.search("testnet") > -1) {
+        this.networkType = NetworkType.Testnet
       }
       const source: Record<string, LocalConfig> =
         this.networkType === NetworkType.Mainnet
-          ? {
-              // ...import.meta.glob('../../chains/mainnet/*.json', {
-              //   eager: true,
-              // }),
-              ...nibiruChains,
-            }
-          : {
-              ...import.meta.glob('../../chains/testnet/*.json', {
-                eager: true,
-              }),
-              ...nibiruChains,
-            };
+          ? import.meta.glob('../../chains/mainnet/*.json', { eager: true })
+          : import.meta.glob('../../chains/testnet/*.json', { eager: true });
       Object.values<LocalConfig>(source).forEach((x: LocalConfig) => {
         this.chains[x.chain_name] = fromLocal(x);
       });
@@ -350,45 +335,31 @@ export const useDashboard = defineStore('dashboard', {
       this.status = LoadingStatus.Loaded;
     },
     async loadLocalConfig(network: NetworkType) {
-      const config: Record<string, ChainConfig> = {};
+      const config: Record<string, ChainConfig> = {} 
       const source: Record<string, LocalConfig> =
-        this.networkType === NetworkType.Mainnet
-          ? {
-              // ...import.meta.glob('../../chains/mainnet/*.json', {
-              //   eager: true,
-              // }),
-              ...nibiruChains,
-            }
-          : {
-              ...import.meta.glob('../../chains/testnet/*.json', {
-                eager: true,
-              }),
-              ...nibiruChains,
-            };
+        network === NetworkType.Mainnet
+          ? import.meta.glob('../../chains/mainnet/*.json', { eager: true })
+          : import.meta.glob('../../chains/testnet/*.json', { eager: true });
       Object.values<LocalConfig>(source).forEach((x: LocalConfig) => {
         config[x.chain_name] = fromLocal(x);
       });
-      return config;
+      return config
     },
     setupDefault() {
       if (this.length > 0) {
         const blockchain = useBlockchain();
-        const keys = Object.keys(this.favoriteMap);
-        for (const element of keys) {
-          if (
-            !blockchain.chainName &&
-            this.chains[element] &&
-            this.favoriteMap[element]
-          ) {
-            blockchain.setCurrent(element);
-            break;
+        const keys = Object.keys(this.favoriteMap)
+        for (let i = 0; i < keys.length; i++) {
+          if (!blockchain.chainName && this.chains[keys[i]] && this.favoriteMap[keys[i]]) {
+            blockchain.setCurrent(keys[i]);
+            break
           }
         }
         if (!blockchain.chainName) {
           const [first] = Object.keys(this.chains);
           blockchain.setCurrent(first);
         }
-        this.loadingPrices();
+        this.loadingPrices()
       }
     },
     setConfigSource(newSource: ConfigSource) {

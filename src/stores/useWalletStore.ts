@@ -9,7 +9,7 @@ import type {
   WalletConnected,
 } from '@/types';
 import { useStakingStore } from './useStakingStore';
-import router from '@/router';
+import router from '@/router'
 
 export const useWalletStore = defineStore('walletStore', {
   state: () => {
@@ -17,8 +17,8 @@ export const useWalletStore = defineStore('walletStore', {
       balances: [] as Coin[],
       delegations: [] as Delegation[],
       unbonding: [] as UnbondingResponses[],
-      rewards: { total: [], rewards: [] } as DelegatorRewards,
-      wallet: {} as WalletConnected,
+      rewards: {total: [], rewards: []} as DelegatorRewards,
+      wallet: {} as WalletConnected
     };
   },
   getters: {
@@ -27,18 +27,18 @@ export const useWalletStore = defineStore('walletStore', {
     },
     connectedWallet() {
       // @ts-ignore
-      if (this.wallet.cosmosAddress) return this.wallet;
+      if(this.wallet.cosmosAddress) return this.wallet
       const chainStore = useBlockchain();
       const key = chainStore.defaultHDPath;
-      const connected = JSON.parse(localStorage.getItem(key) ?? '{}');
-      return connected;
+      const connected = JSON.parse(localStorage.getItem(key) || '{}');
+      return connected
     },
     balanceOfStakingToken(): Coin {
       const stakingStore = useStakingStore();
       return (
         this.balances.find(
           (x) => x.denom === stakingStore.params.bond_denom
-        ) ?? { amount: '0', denom: stakingStore.params.bond_denom }
+        ) || { amount: '0', denom: stakingStore.params.bond_denom }
       );
     },
     stakingAmount() {
@@ -74,17 +74,18 @@ export const useWalletStore = defineStore('walletStore', {
       if (!this.connectedWallet?.cosmosAddress) return '';
       const { prefix, data } = fromBech32(this.connectedWallet.cosmosAddress);
       const chainStore = useBlockchain();
-      return toBech32(chainStore.current?.bech32Prefix ?? prefix, data);
+      return toBech32(chainStore.current?.bech32Prefix || prefix, data);
     },
     shortAddress() {
-      const address: string = this.currentAddress;
-      if (address.length > 4) {
-        return `${address.substring(address.length - 4)}`;
+      const address: string = this.currentAddress
+      if(address.length > 4) {
+        return `${address.substring(address.length -4)}`
       }
-      return '';
-    },
+      return ""
+    }
   },
   actions: {
+
     async loadMyAsset() {
       if (!this.currentAddress) return;
       this.blockchain.rpc.getBankBalances(this.currentAddress).then((x) => {
@@ -121,14 +122,14 @@ export const useWalletStore = defineStore('walletStore', {
       const chainStore = useBlockchain();
       const key = chainStore.defaultHDPath;
       localStorage.removeItem(key);
-      this.$reset();
+      this.$reset()
     },
     setConnectedWallet(value: WalletConnected) {
-      if (value) this.wallet = value;
+      if(value) this.wallet = value 
     },
     suggestChain() {
       // const router = useRouter()
-      router.push({ path: '/wallet/keplr' });
-    },
+      router.push({path: '/wallet/keplr'})
+    }
   },
 });

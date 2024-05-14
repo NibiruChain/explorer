@@ -9,6 +9,7 @@
     "state-sync": "State Sync",
     "cosmwasm": "Cosmwasm",
     "widget": "Widgets",
+    "tx": "Transactions",
     "ibc": "IBC",
     "nft": "NFT",
     "consensus": "Consensus",
@@ -22,17 +23,20 @@
     "links": "Links"
   },
   "pages": {
-    "title": "Nibiru",
+    "title": "Nibiru Explorer",
     "title_all": "404",
     "tag": "Beta",
     "tag_all": "Page Not Found",
-    "slogan": "",
-    "description": "Cosmos Ecosystem Blockchains 🚀",
+    "slogan": "Nibiru Explorer is not just an explorer but also a wallet and more ... 🛠",
+    "description": "Nibiru Ecosystem Blockchains 🚀",
     "search_placeholder": "Search Chain",
     "description_all": "We couldn't find the page you are looking for.",
+    "out_of_sync": "The latest block was produced at ",
     "btn_index": "Back to Home"
   },
   "account": {
+    "amount": "Amount",
+    "received": "Recent Received",
     "type": "Type",
     "address": "Address",
     "acc": "Account",
@@ -125,7 +129,8 @@
     "contract_balances": "Contract Balances",
     "no_escrowed_assets": "No Escrowed Assets",
     "contract_states": "Contract States",
-    "query_contract": "Query Contract"
+    "query_contract": "Query Contract",
+    "tips_description_1": "This feature is available when deploying contracts via WELLDONE Code. For more information, please check the document at the link below."
   },
   "gov": {
     "voting": "Voting",
@@ -263,7 +268,11 @@
     "signed_blocks": "Signed Blocks",
     "missing_blocks": "Missing Blocks",
     "add_validators": "Add Validators",
-    "add": "Add"
+    "add": "Add",
+    "legend": "Legend",
+    "committed": "Committed",
+    "precommitted": "Precommitted",
+    "missed": "Missed"
   },
   "widget": {
     "title": "Initial Setting",
@@ -271,7 +280,7 @@
     "select_endpoint": "Select Endpoint",
     "text_1": "Import global script",
     "text_2": "Connect Wallet",
-    "text_3": "Nibiru Convert"
+    "text_3": "Convert"
   },
   "index": {
     "rank": "Rank",

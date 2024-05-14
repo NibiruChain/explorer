@@ -1,0 +1,31 @@
+{
+  "chain_name": "nibirutestnet2",
+  "registry_name": "nibiru-testnet2",
+  "api": [
+    {
+      "address": "https://lcd.testnet-2.nibiru.fi",
+      "provider": "Nibiru Foundation"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://rpc.testnet-2.nibiru.fi",
+      "provider": "Nibiru Foundation"
+    }
+  ],
+  "sdk_version": "0.45.5",
+  "coin_type": "118",
+  "min_tx_fee": "2500",
+  "addr_prefix": "nibi",
+  "logo": "/logos/nibiru.png",
+  "theme_color": "#F294C0",
+  "assets": [
+    {
+      "base": "unibi",
+      "symbol": "NIBI",
+      "exponent": "6",
+      "coingecko_id": "nibiru",
+      "logo": "/logos/nibiru.png"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { parseCoins } from '@cosmjs/stargate';
 import {
   useBlockchain,
   useFormatter,
@@ -13,10 +14,11 @@ import {
   consensusPubkeyToHexAddress,
   operatorAddressToAccount,
   pubKeyToValcons,
-  valoperToPrefix,
 } from '@/libs';
 import { PageRequest, type Coin, type Delegation, type PaginatedDelegations, type PaginatedTxs, type Validator } from '@/types';
 import PaginationBar from '@/components/PaginationBar.vue';
+import { fromBase64, toBase64 } from '@cosmjs/encoding';
+import { stringToUint8Array, uint8ArrayToString } from '@/libs/utils';
 
 const props = defineProps(['validator', 'chain']);
 
@@ -79,6 +81,7 @@ const selfRate = computed(() => {
   }
   return '-';
 });
+
 const logo = (identity?: string) => {
   if (!identity) return '';
   const url = avatars.value[identity] || '';
@@ -86,32 +89,50 @@ const logo = (identity?: string) => {
     ? url
     : `https://s3.amazonaws.com/keybase_processed_uploads/${url}`;
 };
+
+const fetchAvatar = (identity: string) => {
+  // fetch avatar from keybase
+  return new Promise<void>((resolve) => {
+    staking
+      .keybase(identity)
+      .then((d) => {
+        if (Array.isArray(d.them) && d.them.length > 0) {
+          const uri = String(d.them[0]?.pictures?.primary?.url).replace(
+            'https://s3.amazonaws.com/keybase_processed_uploads/',
+            ''
+          );
+
+          avatars.value[identity] = uri;
+          resolve();
+        } else throw new Error(`failed to fetch avatar for ${identity}.`);
+      })
+      .catch((error) => {
+        // console.error(error); // uncomment this if you want the user to see if the avatar failed to load.
+        resolve();
+      });
+  });
+};
+
+const loadAvatar = (identity: string) => {
+  // fetches avatar from keybase and stores it in localStorage
+  fetchAvatar(identity).then(() => {
+    localStorage.setItem('avatars', JSON.stringify(avatars.value));
+  });
+};
+
 onMounted(() => {
   if (validator) {
     staking.fetchValidator(validator).then((res) => {
       v.value = res.validator;
       identity.value = res.validator?.description?.identity || '';
-      if (identity.value && !avatars.value[identity.value]) {
-        staking.keybase(identity.value).then((d) => {
-          if (Array.isArray(d.them) && d.them.length > 0) {
-            const uri = String(d.them[0]?.pictures?.primary?.url).replace(
-              'https://s3.amazonaws.com/keybase_processed_uploads/',
-              ''
-            );
-            if (uri) {
-              avatars.value[identity.value] = uri;
-              localStorage.setItem('avatars', JSON.stringify(avatars.value));
-            }
-          }
-        });
-      }
-      const prefix = valoperToPrefix(v.value.operator_address) || '<Invalid>';
+      if (identity.value && !avatars.value[identity.value]) loadAvatar(identity.value);
+
       addresses.value.hex = consensusPubkeyToHexAddress(
         v.value.consensus_pubkey
       );
       addresses.value.valCons = pubKeyToValcons(
         v.value.consensus_pubkey,
-        prefix
+        blockchain.current?.bech32ConsensusPrefix || "",
       );
     });
     blockchain.rpc
@@ -169,10 +190,69 @@ const tipMsg = computed(() => {
 
 function pageload(p: number) {
   page.setPage(p);
+  page.limit = 10;
+
   blockchain.rpc.getStakingValidatorsDelegations(validator, page).then(res => {
       delegations.value = res
   }) 
 }
+
+const events = ref({} as PaginatedTxs)
+
+enum EventType {
+  Delegate = 'delegate',
+  Unbond = 'unbond',
+}
+
+const selectedEventType = ref(EventType.Delegate)
+
+function loadPowerEvents(p: number, type: EventType) {
+  selectedEventType.value = type
+  page.setPage(p);
+  page.setPageSize(5);
+  blockchain.rpc.getTxs("?order_by=2&events={type}.validator='{validator}'", { type: selectedEventType.value, validator }, page).then(res => {
+    events.value = res
+  })
+}
+
+function pagePowerEvents(page: number) {
+    loadPowerEvents(page, selectedEventType.value)
+}
+
+pagePowerEvents(1)
+
+function mapEvents(events: {type: string, attributes: {key: string, value: string}[]}[]) {
+  const attributes = events
+    .filter(x => x.type === selectedEventType.value)
+    .filter(x => x.attributes.findIndex(attr => attr.value === validator || attr.value === toBase64(stringToUint8Array(validator))) > -1)
+    .map(x => {
+      // check if attributes need to decode
+      const output = {} as {[key: string]: string }
+
+      if (x.attributes.findIndex(a => a.key === `amount`) > -1) {
+        x.attributes.forEach(attr => {
+          output[attr.key] = attr.value
+        })
+      } else {
+        x.attributes.forEach(attr => {
+          output[uint8ArrayToString(fromBase64(attr.key))] = uint8ArrayToString(fromBase64(attr.value))
+        })
+      };
+
+      return output;
+    });
+
+  const coinsAsString = attributes.map((x: any) => x.amount).join(',');
+  const coins = parseCoins(coinsAsString);
+
+  return coins.map(coin => format.formatToken(coin)).join(', ');
+}
+
+function mapDelegators(messages: any[]) {
+  if(!messages) return []
+  return Array.from(new Set(messages.map(x => x.delegator_address || x.grantee)))
+}
+
 </script>
 <template>
   <div>
@@ -184,14 +264,18 @@ function pageload(p: number) {
               <div class="w-24 rounded-lg absolute opacity-10"></div>
               <div class="w-24 rounded-lg">
                 <img
-                  v-if="avatars[identity] !== 'undefined'"
+                  v-if="identity && avatars[identity] !== 'undefined'"
                   v-lazy="logo(identity)"
                   class="object-contain"
-                  alt="avatar"
+                  @error="
+                    (e) => {
+                      loadAvatar(identity);
+                    }
+                  "
                 />
                 <Icon
                   v-else
-                  class="text-4xl"
+                  class="text-8xl"
                   :icon="`mdi-help-circle-outline`"
                 />
               </div>
@@ -493,7 +577,6 @@ function pageload(p: number) {
       </div>
       <div class="rounded overflow-auto">
         <table class="table validatore-table w-full">
-          <caption class="hidden">Validators</caption>
           <thead>
             <th class="text-left pl-4" style="position: relative; z-index: 2">
               {{ $t('account.delegator') }}
@@ -520,13 +603,12 @@ function pageload(p: number) {
       <div class="text-lg mb-4 font-semibold">{{ $t('account.transactions') }}</div>
       <div class="rounded overflow-auto">
         <table class="table validatore-table w-full">
-          <caption class="hidden">Validators</caption>
           <thead>
             <th class="text-left pl-4" style="position: relative; z-index: 2">
               {{ $t('account.height') }}
             </th>
             <th class="text-left pl-4">{{ $t('account.hash') }}</th>
-            <th class="text-left pl-4 w-[40%]">{{ $t('account.messages') }}</th>
+            <th class="text-left pl-4" width="40%">{{ $t('account.messages') }}</th>
             <th class="text-left pl-4">{{ $t('account.time') }}</th>
           </thead>
           <tbody>
@@ -554,12 +636,78 @@ function pageload(p: number) {
                   <Icon v-else icon="mdi-multiply" class="text-no" />
                 </div>
               </td>
-              <td class="w-[150%]">{{ format.toDay(item.timestamp, 'from') }}</td>
+              <td width="150">{{ format.toDay(item.timestamp, 'from') }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+
+    <div class="mt-5 bg-base-100 shadow rounded p-4">
+      <div class="text-lg mb-4 font-semibold">
+        <div class="tabs tabs-boxed bg-transparent">
+                
+                <span class="mr-10">Voting Power Events: </span>
+                <a
+                    class="tab text-gray-400"
+                    :class="{ 'tab-active': selectedEventType === EventType.Delegate }"
+                    @click="loadPowerEvents(1, EventType.Delegate)"
+                    >{{ $t('account.btn_delegate') }}</a
+                >
+                <a
+                    class="tab text-gray-400"
+                    :class="{ 'tab-active': selectedEventType === EventType.Unbond }"
+                    @click="loadPowerEvents(1, EventType.Unbond)"
+                    >{{ $t('account.btn_unbond') }}</a
+                >
+            </div>
+      </div>
+      <div class="rounded overflow-auto">
+        <table class="table validatore-table w-full">
+          <thead>
+            <th class="text-left pl-4">{{ $t('account.delegator') }}</th>
+            <th class="text-left pl-4">{{ $t('account.amount') }}</th>
+            <th class="text-left pl-4">{{ $t('account.height') }} / {{ $t('account.time') }}</th>
+          </thead>
+          <tbody>
+            <tr v-for="(item, i) in events.tx_responses">
+              <td class="pr-2 truncate text-primary" style="max-width: 250px">
+                <RouterLink v-for="d in mapDelegators(item.tx?.body?.messages)" :to="`/${props.chain}/account/${d}`">
+                  {{ d }}
+                </RouterLink> 
+              </td>
+              <td>
+                <div class="flex items-center" :class="{
+                  'text-yes' : selectedEventType === EventType.Delegate,
+                  'text-no' : selectedEventType ===  EventType.Unbond,
+                }">
+                  <RouterLink :to="`/${props.chain}/tx/${item.txhash}`">
+                    <span class="mr-2">
+                      {{ (selectedEventType === EventType.Delegate ? '+' : '-')}} {{
+                      mapEvents(item.events)
+                    }}</span>
+                  </RouterLink>
+                  <Icon
+                    v-if="item.code === 0"
+                    icon="mdi-check"
+                    class="text-yes"
+                  />
+                  <Icon v-else icon="mdi-multiply" class="text-no" />
+                </div>
+              </td>
+              <td width="150">
+                <RouterLink class="text-primary mb-0" :to="`/${props.chain}/block/${item.height}`">{{
+                  item.height
+                }}</RouterLink><br>
+                <span class="text-xs pt-0 mt-0">{{ format.toDay(item.timestamp, 'from') }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <PaginationBar :total="events.pagination?.total" :limit="page.limit" :callback="pagePowerEvents"/>
+      </div>
+    </div>
+    <!-- end -->
     <div class="toast" v-show="showCopyToast === 1">
       <div class="alert alert-success">
         <div class="text-xs md:!text-sm">

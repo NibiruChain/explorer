@@ -20,7 +20,6 @@ const header = computed(() => {
 <template>
   <div class="overflow-auto max-h-96 ">
     <table class="table table-xs table-compact table-pin-rows w-full">
-      <caption class="hidden">List Table</caption>
       <thead v-if="thead">
         <tr>
           <th

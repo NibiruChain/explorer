@@ -21,7 +21,6 @@ const chain = useBlockchain();
 <template>
   <div class="overflow-x-auto mt-4">
     <table class="table w-full" density="compact" v-if="txs.length > 0">
-      <caption class="hidden">Txs</caption>
       <thead>
         <tr>
           <th style="position: relative; z-index: 2;">Hash</th>
