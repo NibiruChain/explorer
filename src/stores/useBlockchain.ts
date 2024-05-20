@@ -68,7 +68,6 @@ export const useBlockchain = defineStore('blockchain', {
       const router = useRouter();
       const routes = router?.getRoutes() || [];
       if (this.current && routes) {
-        console.log(this.current);
         if (this.current?.themeColor) {
           const { color } = hexToRgb(this.current?.themeColor);
           const { h, s, l } = rgbToHsl(color);
