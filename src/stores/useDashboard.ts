@@ -259,8 +259,6 @@ export enum ConfigSource {
   Local = 'local',
 }
 
-const nibiruChains = await getNibiruChains();
-
 export const useDashboard = defineStore('dashboard', {
   state: () => {
     const favMap = JSON.parse(
@@ -334,6 +332,8 @@ export const useDashboard = defineStore('dashboard', {
       if (window.location.hostname.search('testnet') > -1) {
         this.networkType = NetworkType.Testnet;
       }
+      const nibiruChains = await getNibiruChains();
+
       const source: Record<string, LocalConfig> =
         this.networkType === NetworkType.Mainnet
           ? {
@@ -356,6 +356,8 @@ export const useDashboard = defineStore('dashboard', {
     },
     async loadLocalConfig(network: NetworkType) {
       const config: Record<string, ChainConfig> = {};
+
+      const nibiruChains = await getNibiruChains();
       const source: Record<string, LocalConfig> =
         this.networkType === NetworkType.Mainnet
           ? {
