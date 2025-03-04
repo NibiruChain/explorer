@@ -68,6 +68,7 @@ export interface ChainConfig {
     rpc?: Endpoint[];
     grpc?: Endpoint[];
   };
+  bech32ConsensusPrefix: string;
   logo: string;
   versions: {
     application?: string;
@@ -95,6 +96,7 @@ export interface LocalConfig {
   provider_chain: {
     api: string[] | Endpoint[];
   };
+  consensus_prefix?: string;
   assets: {
     base: string;
     coingecko_id: string;
@@ -157,6 +159,8 @@ export function fromLocal(lc: LocalConfig): ChainConfig {
   conf.chainName = lc.chain_name;
   conf.coinType = lc.coin_type;
   conf.prettyName = lc.registry_name ?? lc.chain_name;
+  conf.bech32ConsensusPrefix =
+    lc.consensus_prefix ?? lc.addr_prefix + 'valcons';
   conf.endpoints = {
     rest: apiConverter(lc.api),
     rpc: apiConverter(lc.rpc),
@@ -178,6 +182,7 @@ export function fromDirectory(source: DirectoryChain): ChainConfig {
   const conf = {} as ChainConfig;
   (conf.assets = source.assets),
     (conf.bech32Prefix = source.bech32_prefix),
+    (conf.bech32ConsensusPrefix = source.bech32_prefix + 'valcons'),
     (conf.chainId = source.chain_id),
     (conf.chainName = source.chain_name),
     (conf.prettyName = source.pretty_name),
