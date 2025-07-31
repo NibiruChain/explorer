@@ -138,10 +138,10 @@ export enum LoadingStatus {
 
 export const useDashboard = defineStore('dashboard', {
   state: () => {
-    const favMap = JSON.parse(localStorage.getItem('favoriteMap') || '{"cosmos":true, "osmosis":true}');
+    const favMap = JSON.parse(localStorage.getItem('favoriteMap') || '{"cataclysm-1":true}');
     return {
       status: LoadingStatus.Empty,
-      source: ConfigSource.MainnetCosmosDirectory,
+      source: "https://networks.nibiru.fi",
       networkType: NetworkType.Mainnet,
       favoriteMap: favMap as Record<string, boolean>,
       chains: {} as Record<string, ChainConfig>,
@@ -156,8 +156,8 @@ export const useDashboard = defineStore('dashboard', {
   },
   actions: {
     async initial() {
-      await this.loadingFromLocal();
-      //await this.loadingFromRegistry()
+      // await this.loadingFromLocal();
+      await this.loadingFromRegistry()
     },
     loadingPrices() {
       const coinIds = [] as string[];
