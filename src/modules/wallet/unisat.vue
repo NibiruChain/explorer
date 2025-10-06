@@ -4,7 +4,6 @@ import { useDashboard, useBlockchain } from '@/stores';
 import type { ChainConfig } from '@/types/chaindata';
 import { CosmosRestClient } from '@/libs/client';
 import { onMounted } from 'vue';
-import AdBanner from '@/components/ad/AdBanner.vue';
 
 const error = ref('');
 const conf = ref('');
@@ -18,7 +17,9 @@ onMounted(() => {
 async function initParamsForKeplr() {
   const chain = selected.value;
   if (!chain.endpoints?.rest?.at(0)) throw new Error('Endpoint does not set');
-  const client = CosmosRestClient.newDefault(chain.endpoints.rest?.at(0)?.address || '');
+  const client = CosmosRestClient.newDefault(
+    chain.endpoints.rest?.at(0)?.address || ''
+  );
   const b = await client.getBaseBlockLatest();
   const chainid = b.block.header.chain_id;
 
@@ -28,7 +29,9 @@ async function initParamsForKeplr() {
     high: 0.03,
   };
   const coinDecimals =
-    chain.assets[0].denom_units.find((x) => x.denom === chain.assets[0].symbol.toLowerCase())?.exponent || 6;
+    chain.assets[0].denom_units.find(
+      (x) => x.denom === chain.assets[0].symbol.toLowerCase()
+    )?.exponent || 6;
   conf.value = JSON.stringify(
     {
       chainId: chainid,
@@ -82,18 +85,23 @@ function suggest() {
   // @ts-ignore
   if (window.unisat) {
     // @ts-ignore
-    window.unisat.experimentalSuggestChain(JSON.parse(conf.value)).catch((e) => {
-      error.value = e;
-    });
+    window.unisat
+      .experimentalSuggestChain(JSON.parse(conf.value))
+      .catch((e: string) => {
+        error.value = e;
+      });
   }
 }
 </script>
 
 <template>
   <div class="bg-base-100 p-4 rounded text-center">
-    <AdBanner id="keplr-banner-ad" unit="banner" width="970px" height="90px" />
     <div class="flex">
-      <select v-model="selected" class="select select-bordered mx-5" @change="initParamsForKeplr">
+      <select
+        v-model="selected"
+        class="select select-bordered mx-5"
+        @change="initParamsForKeplr"
+      >
         <option v-for="c in dashboard.chains" :value="c">
           {{ c.chainName }}
         </option>
@@ -103,10 +111,15 @@ function suggest() {
       </button>
     </div>
     <div class="text-main mt-5">
-      <textarea v-model="conf" class="textarea textarea-bordered w-full" rows="15"></textarea>
+      <textarea
+        v-model="conf"
+        class="textarea textarea-bordered w-full"
+        rows="15"
+      ></textarea>
     </div>
     <div class="mt-4 mb-4">
-      If the chain is not offically support on Keplr, you can submit these parameters to enable Keplr.
+      If the chain is not offically support on Keplr, you can submit these
+      parameters to enable Keplr.
     </div>
   </div>
 </template>

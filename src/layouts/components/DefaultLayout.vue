@@ -22,7 +22,6 @@ import type {
   VerticalNavItems,
 } from '../types';
 import dayjs from 'dayjs';
-import AdBanner from '@/components/ad/AdBanner.vue';
 
 const dashboard = useDashboard();
 dashboard.initial();
@@ -64,7 +63,9 @@ function isNavTitle(nav: VerticalNavItems | any): nav is NavSectionTitle {
 }
 function selected(route: any, nav: NavLink) {
   const b =
-    route.path === nav.to?.path || (route.path.startsWith(nav.to?.path) && nav.title.indexOf('dashboard') === -1);
+    route.path === nav.to?.path ||
+    (route.path.startsWith(nav.to?.path) &&
+      nav.title.indexOf('dashboard') === -1);
   return b;
 }
 const blocktime = computed(() => {
@@ -77,10 +78,6 @@ const behind = computed(() => {
 });
 
 dayjs();
-
-const show_ad = computed(() => {
-  return location.hostname.indexOf('ping.pub') > -1;
-});
 </script>
 
 <template>
@@ -92,8 +89,10 @@ const show_ad = computed(() => {
     >
       <div class="flex justify-between mt-1 pl-4 py-4 mb-1">
         <RouterLink to="/" class="flex items-center">
-          <img class="w-10 h-10" src="../../assets/nibiru.svg" />
-          <h1 class="flex-1 ml-3 text-2xl font-semibold dark:text-white">Nibiru</h1>
+          <img class="w-10 h-10" src="../../assets/logo.png" />
+          <h1 class="flex-1 ml-3 text-2xl font-semibold dark:text-white">
+            Nibiru Explorer
+          </h1>
         </RouterLink>
         <div
           class="pr-4 cursor-pointer xl:!hidden"
@@ -102,7 +101,11 @@ const show_ad = computed(() => {
           <Icon icon="mdi-close" class="text-2xl" />
         </div>
       </div>
-      <div v-for="(item, index) of blockchain.computedChainMenu" :key="index" class="px-2">
+      <div
+        v-for="(item, index) of blockchain.computedChainMenu"
+        :key="index"
+        class="px-2"
+      >
         <div
           v-if="isNavGroup(item)"
           :tabindex="index"
@@ -113,7 +116,12 @@ const show_ad = computed(() => {
             'collapse-close': index === 0 && !sidebarOpen,
           }"
         >
-          <input v-if="index > 0" type="checkbox" class="cursor-pointer !h-10 block" @click="changeOpen(index)" />
+          <input
+            v-if="index > 0"
+            type="checkbox"
+            class="cursor-pointer !h-10 block"
+            @click="changeOpen(index)"
+          />
           <div
             class="collapse-title !py-0 px-4 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
           >
@@ -126,8 +134,14 @@ const show_ad = computed(() => {
                 'text-blue-500': item?.title !== 'Favorite',
               }"
             />
-            <img v-if="item?.icon?.image" :src="item?.icon?.image" class="w-6 h-6 rounded-full mr-3" />
-            <div class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap">
+            <img
+              v-if="item?.icon?.image"
+              :src="item?.icon?.image"
+              class="w-6 h-6 rounded-full mr-3"
+            />
+            <div
+              class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap"
+            >
               {{ item?.title }}
             </div>
             <div
@@ -139,7 +153,10 @@ const show_ad = computed(() => {
             </div>
           </div>
           <div class="collapse-content">
-            <div v-for="(el, key) of item?.children" class="menu bg-base-100 w-full !p-0">
+            <div
+              v-for="(el, key) of item?.children"
+              class="menu bg-base-100 w-full !p-0"
+            >
               <RouterLink
                 v-if="isNavLink(el)"
                 @click="sidebarShow = false"
@@ -154,7 +171,9 @@ const show_ad = computed(() => {
                   icon="mdi:chevron-right"
                   class="mr-2 ml-3"
                   :class="{
-                    'text-white': $route.path === el?.to?.path && item?.title !== 'Favorite',
+                    'text-white':
+                      $route.path === el?.to?.path &&
+                      item?.title !== 'Favorite',
                   }"
                 />
                 <img
@@ -176,7 +195,9 @@ const show_ad = computed(() => {
               </RouterLink>
             </div>
             <div
-              v-if="index === 0 && dashboard.networkType === NetworkType.Testnet"
+              v-if="
+                index === 0 && dashboard.networkType === NetworkType.Testnet
+              "
               class="menu bg-base-100 w-full !p-0"
             >
               <RouterLink
@@ -184,8 +205,16 @@ const show_ad = computed(() => {
                 :to="`/${blockchain.chainName}/faucet`"
               >
                 <Icon icon="mdi:chevron-right" class="mr-2 ml-3"></Icon>
-                <div class="text-base capitalize text-gray-500 dark:text-gray-300">Faucet</div>
-                <div class="badge badge-sm text-white border-none badge-error ml-auto">New</div>
+                <div
+                  class="text-base capitalize text-gray-500 dark:text-gray-300"
+                >
+                  Faucet
+                </div>
+                <div
+                  class="badge badge-sm text-white border-none badge-error ml-auto"
+                >
+                  New
+                </div>
               </RouterLink>
             </div>
           </div>
@@ -211,7 +240,9 @@ const show_ad = computed(() => {
             :src="item?.icon?.image"
             class="w-6 h-6 rounded-full mr-3 border border-blue-100"
           />
-          <div class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap">
+          <div
+            class="text-base capitalize flex-1 text-gray-700 dark:text-gray-200 whitespace-nowrap"
+          >
             {{ item?.title }}
           </div>
           <div
@@ -236,7 +267,11 @@ const show_ad = computed(() => {
           class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:frequently-asked-questions" class="text-xl mr-2" />
-          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">Wallet Helper</div>
+          <div
+            class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200"
+          >
+            Wallet Helper
+          </div>
         </RouterLink>
         <div
           v-if="showDiscord"
@@ -245,31 +280,45 @@ const show_ad = computed(() => {
           {{ $t('module.sponsors') }}
         </div>
         <Sponsors v-if="showDiscord" />
-        <div class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase">{{ $t('module.links') }}</div>
+        <div class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase">
+          {{ $t('module.links') }}
+        </div>
         <a
-          href="https://twitter.com/ping_pub"
+          href="https://twitter.com/nibiruchain"
           target="_blank"
           class="py-2 px-4 flex items-center cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:twitter" class="text-xl mr-2" />
-          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">Twitter</div>
+          <div
+            class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200"
+          >
+            Twitter
+          </div>
         </a>
         <a
           v-if="showDiscord"
-          href="https://discord.com/invite/CmjYVSr6GW"
+          href="https://discord.gg/7cWKZuSY6G"
           target="_blank"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:discord" class="text-xl mr-2" />
-          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">Discord</div>
+          <div
+            class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200"
+          >
+            Discord
+          </div>
         </a>
         <a
-          href="https://github.com/ping-pub/explorer/discussions"
+          href="https://nibiru.fi/docs"
           target="_blank"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
           <Icon icon="mdi:frequently-asked-questions" class="text-xl mr-2" />
-          <div class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200">FAQ</div>
+          <div
+            class="text-base capitalize flex-1 text-gray-600 dark:text-gray-200"
+          >
+            FAQ
+          </div>
         </a>
       </div>
     </div>
@@ -323,7 +372,6 @@ const show_ad = computed(() => {
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in">
             <div>
-              <AdBanner v-if="show_ad" />
               <Component :is="Component" />
             </div>
           </Transition>

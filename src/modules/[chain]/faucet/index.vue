@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import AdBanner from '@/components/ad/AdBanner.vue';
 import { get } from '@/libs';
 import { useBlockchain, useFormatter, useGovStore } from '@/stores';
 import { ref, onMounted, computed } from 'vue';
@@ -21,10 +20,15 @@ const configChecker = ref('');
 
 const checklist = computed(() => {
   const endpoint = chainStore.current?.endpoints?.rest;
-  const bs = balances.value.length > 0 && balances.value.findIndex((v: any) => v.amount <= 10) === -1;
+  const bs =
+    balances.value.length > 0 &&
+    balances.value.findIndex((v: any) => v.amount <= 10) === -1;
   return [
     { title: 'Rest Endpoint', status: endpoint && endpoint[0].address !== '' },
-    { title: 'Faucet Configured', status: chainStore.current?.faucet !== undefined },
+    {
+      title: 'Faucet Configured',
+      status: chainStore.current?.faucet !== undefined,
+    },
     { title: 'Faucet Account', status: faucet.value !== '' },
     { title: 'Faucet Balance', status: bs },
   ];
@@ -53,10 +57,12 @@ function claim() {
   if (!address.value) return;
   faucetModal.value = true;
   // @ts-ignore
-  get(`${faucetUrl.value}/send/${address.value}`).then((res: FaucetResponse) => {
-    console.log(res);
-    ret.value = res;
-  });
+  get(`${faucetUrl.value}/send/${address.value}`).then(
+    (res: FaucetResponse) => {
+      console.log(res);
+      ret.value = res;
+    }
+  );
 }
 
 function balance() {
@@ -79,7 +85,11 @@ onMounted(() => {
 <template>
   <div>
     <div class="flex flex-col items-center justify-center mb-6 mt-14 gap-4">
-      <img v-if="chainStore.current?.logo" :src="`${chainStore.current?.logo}`" class="w-16 rounded-md" />
+      <img
+        v-if="chainStore.current?.logo"
+        :src="`${chainStore.current?.logo}`"
+        class="w-16 rounded-md"
+      />
       <div v-else class="w-16 rounded-full">
         <svg
           version="1.0"
@@ -87,7 +97,12 @@ onMounted(() => {
           viewBox="0 0 150.000000 132.000000"
           preserveAspectRatio="xMidYMid meet"
         >
-          <g transform="translate(0.000000,132.000000) scale(0.100000,-0.100000)" fill="#666CFF" class="" stroke="none">
+          <g
+            transform="translate(0.000000,132.000000) scale(0.100000,-0.100000)"
+            fill="#666CFF"
+            class=""
+            stroke="none"
+          >
             <path
               d="M500 1310 l-125 -5 -182 -315 c-100 -173 -182 -321 -182 -329 -1 -7
             81 -159 181 -337 l183 -324 372 0 371 0 186 325 c102 179 186 330 186 337 0 7
@@ -111,7 +126,9 @@ onMounted(() => {
           </g>
         </svg>
       </div>
-      <h1 class="text-primary text-3xl md:!text-6xl font-bold capitalize">{{ chainStore.chainName }} Faucet</h1>
+      <h1 class="text-primary text-3xl md:!text-6xl font-bold capitalize">
+        {{ chainStore.chainName }} Faucet
+      </h1>
     </div>
     <div class="bg-base-100 my-5 px-4 pt-3 pb-4 rounded shadow">
       <h2 class="card-title">Get Tokens</h2>
@@ -123,12 +140,14 @@ onMounted(() => {
         :disabled="notReady"
         placeholder="Enter your address"
       />
-      <button class="btn btn-primary w-full bg-primary text-white" :disabled="notReady" @click="claim()">
+      <button
+        class="btn btn-primary w-full bg-primary text-white"
+        :disabled="notReady"
+        @click="claim()"
+      >
         Get Tokens
       </button>
     </div>
-
-    <AdBanner id="home-banner-ad" unit="banner" />
 
     <div class="bg-base-100 my-5 px-4 pt-3 pb-4 rounded shadow">
       <h2 class="card-title">Enable Faucet</h2>
@@ -150,14 +169,21 @@ onMounted(() => {
 
         <span class="text-base"> 2. Fund the faucet account</span>
         <div class="mockup-code bg-base-200 my-2">
-          <pre data-prefix=">"><code class=" text-gray-800 dark:invert"> Faucet Address: {{ faucet }} </code></pre>
+          <pre
+            data-prefix=">"
+          ><code class=" text-gray-800 dark:invert"> Faucet Address: {{ faucet }} </code></pre>
           <pre
             data-prefix=">"
           ><code class="text-gray-800 dark:invert"> Balances: {{ format.formatTokens(balances) }} </code></pre>
         </div>
       </div>
     </div>
-    <input type="checkbox" v-model="faucetModal" id="my_modal_6" class="modal-toggle" />
+    <input
+      type="checkbox"
+      v-model="faucetModal"
+      id="my_modal_6"
+      class="modal-toggle"
+    />
     <div class="modal" role="dialog">
       <div class="modal-box">
         <div v-if="ret.status === 'error'">
@@ -167,18 +193,21 @@ onMounted(() => {
         <div v-else-if="ret.status === 'ok'">
           <h3 class="font-bold text-green-500">Token Sent!</h3>
           <div class="text-center mt-4">
-            <RouterLink :to="`/${chainStore.chainName}/tx/${ret.result.txhash}`">View Transaction</RouterLink>
+            <RouterLink :to="`/${chainStore.chainName}/tx/${ret.result.txhash}`"
+              >View Transaction</RouterLink
+            >
           </div>
         </div>
-        <h3 v-else class="font-bold text-lg">Processing <span class="loading loading-bars loading-sm"></span></h3>
+        <h3 v-else class="font-bold text-lg">
+          Processing <span class="loading loading-bars loading-sm"></span>
+        </h3>
 
         <div class="modal-action">
-          <label for="my_modal_6" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-        </div>
-        <div class="py-2">
-          <div>
-            <AdBanner id="popup-ad" unit="popup" />
-          </div>
+          <label
+            for="my_modal_6"
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            >✕</label
+          >
         </div>
       </div>
     </div>

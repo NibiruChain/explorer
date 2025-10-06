@@ -22,7 +22,7 @@ export const useMintStore = defineStore('mintStore', {
           this.inflation = '0';
         });
         if (res) {
-          this.inflation = res.inflation;
+          this.inflation = res.params.inflation_distribution.staking_rewards;
         }
       } catch (e) {
         console.log(e);

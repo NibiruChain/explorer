@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,13 +10,26 @@
       content="Nibiru Explorer is a block explorer/web wallet for Nibiru Chain."
     />
     <link rel="stylesheet" type="text/css" href="/loader.css" />
+    <script
+      async
+      type="text/javascript"
+      src="https://www.googletagmanager.com/gtm.js?id=GTM-5Z96TB6L&l=dataLayer"
+    ></script>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        title="Google Tag Manager"
+        src="https://www.googletagmanager.com/ns.html?id=GTM-5Z96TB6L"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div id="app">
       <div id="loading-bg">
-        <div class="loading-logo">
-          <img src="/logo.svg" alt="Logo" />
-        </div>
         <div class="pre-loading">
           <div class="effect-1 effects"></div>
           <div class="effect-2 effects"></div>
@@ -25,27 +38,9 @@
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
-    <!-- Google tag (gtag.js) -->
     <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=GTM-5Z96TB6L"
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@ping-pub/widget@latest/dist/widget.min.js"
     ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      // Set default consent to 'denied' as a placeholder
-      // Determine actual values based on your own requirements
-      gtag('consent', 'default', {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied',
-      });
-      gtag('config', 'GTM-5Z96TB6L');
-    </script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@ping-pub/widget@latest/dist/widget.min.js"></script>
   </body>
 </html>
