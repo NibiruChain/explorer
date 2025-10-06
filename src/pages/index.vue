@@ -24,21 +24,7 @@ const chains = computed(() => {
   }
 });
 
-const featured = computed(() => {
-  const names = [
-    'cosmos',
-    'osmosis',
-    'akash',
-    'celestia',
-    'evmos',
-    'injective',
-    'dydx',
-    'noble',
-  ];
-  return chains.value
-    .filter((x) => names.includes(x.chainName))
-    .sort((a, b) => names.indexOf(a.chainName) - names.indexOf(b.chainName));
-});
+const featured = computed(() => []);
 
 const chainStore = useBlockchain();
 </script>
