@@ -91,17 +91,6 @@ const chainStore = useBlockchain();
       <h2 class="mb-6">Featured Blockchains 🔥</h2>
     </div>
 
-    <div
-      v-if="featured.length > 0"
-      class="grid grid-cols-1 gap-4 mt-6 md:!grid-cols-3 lg:!grid-cols-4 2xl:!grid-cols-5"
-    >
-      <ChainSummary
-        v-for="(chain, index) in featured"
-        :key="index"
-        :name="chain.chainName"
-      />
-    </div>
-
     <div class="text-center text-base mt-6 text-primary">
       <h2 class="mb-6">{{ $t('pages.description') }}</h2>
     </div>
