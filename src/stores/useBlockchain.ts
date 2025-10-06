@@ -1,21 +1,13 @@
 import { defineStore } from 'pinia';
-import {
-  useDashboard,
-  type ChainConfig,
-  type Endpoint,
-  EndpointType,
-} from './useDashboard';
-import type {
-  NavGroup,
-  NavLink,
-  NavSectionTitle,
-  VerticalNavItems,
-} from '@/layouts/types';
+import type { ChainConfig, Endpoint } from '@/types/chaindata';
+import { useDashboard} from './useDashboard';
+import type { NavGroup, NavLink, NavSectionTitle, VerticalNavItems } from '@/layouts/types';
 import { useRouter } from 'vue-router';
 import { CosmosRestClient } from '@/libs/client';
 import {
   useBankStore,
   useBaseStore,
+  useDistributionStore,
   useGovStore,
   useMintStore,
   useStakingStore,
@@ -31,11 +23,7 @@ export const useBlockchain = defineStore('blockchain', {
       status: {} as Record<string, string>,
       rest: '',
       chainName: '',
-      endpoint: {} as {
-        type?: EndpointType;
-        address: string;
-        provider: string;
-      },
+      endpoint: {} as Endpoint,
       connErr: '',
     };
   },
@@ -86,11 +74,7 @@ export const useBlockchain = defineStore('blockchain', {
             badgeClass: 'bg-error',
             children: routes
               .filter((x) => x.meta.i18n) // defined menu name
-              .filter(
-                (x) =>
-                  !this.current?.features ||
-                  this.current.features.includes(String(x.meta.i18n))
-              ) // filter none-custom module
+              .filter((x) => !this.current?.features || this.current.features.includes(String(x.meta.i18n))) // filter none-custom module
               .map((x) => ({
                 title: `module.${x.meta.i18n}`,
                 to: { path: x.path.replace(':chain', this.chainName) },
@@ -145,12 +129,15 @@ export const useBlockchain = defineStore('blockchain', {
       //     global.current
       // }
       useWalletStore().$reset();
-      await useStakingStore().init();
+      if (!this.isConsumerChain) {
+        await useStakingStore().init();
+      }
       useBankStore().initial();
       useBaseStore().initial();
       useGovStore().initial();
       useMintStore().initial();
       useBlockModule().initial();
+      useDistributionStore().initial();
     },
 
     randomEndpoint(chainName: string): Endpoint | undefined {
@@ -176,10 +163,7 @@ export const useBlockchain = defineStore('blockchain', {
       this.connErr = '';
       this.endpoint = endpoint;
       this.rpc = CosmosRestClient.newStrategy(endpoint.address, this.current);
-      localStorage.setItem(
-        `endpoint-${this.chainName}`,
-        JSON.stringify(endpoint)
-      );
+      localStorage.setItem(`endpoint-${this.chainName}`, JSON.stringify(endpoint));
     },
     async setCurrent(name: string) {
       // Ensure chains are loaded due to asynchronous calls.
@@ -189,9 +173,7 @@ export const useBlockchain = defineStore('blockchain', {
 
       // Find the case-sensitive name for the chainName, else simply use the parameter-value.
       const caseSensitiveName =
-        Object.keys(this.dashboard.chains).find(
-          (x) => x.toLowerCase() === name.toLowerCase()
-        ) || name;
+        Object.keys(this.dashboard.chains).find((x) => x.toLowerCase() === name.toLowerCase()) || name;
 
       // Update chainName if needed
       if (caseSensitiveName !== this.chainName) {

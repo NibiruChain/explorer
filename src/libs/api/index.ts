@@ -198,4 +198,37 @@ export const DEFAULT: RequestRegistry = {
     url: '/interchain_security/ccv/provider/validator_consumer_addr?provider_address={provider_address}&chain_id={chain_id}',
     adapter,
   },
+  interchain_security_provider_opted_in_validators: {
+    url: '/interchain_security/ccv/provider/opted_in_validators/{chain_id}',
+    adapter,
+  },
+  interchain_security_consumer_validators: {
+    url: '/interchain_security/ccv/provider/consumer_validators/{chain_id}',
+    adapter,
+  },
+
+  group_groups: {
+    url: '/cosmos/group/v1/groups',
+    adapter,
+  },
+  group_groups_by_admin: {
+    url: '/cosmos/group/v1/groups_by_admin/{admin}',
+    adapter,
+  },
+  group_groups_by_member: {
+    url: '/cosmos/group/v1/groups_by_member/{address}',
+    adapter,
+  },
+  group_proposal: {
+    url: '/cosmos/group/v1/proposal/{proposal_id}',
+    adapter,
+  },
+  group_proposal_tally: {
+    url: '/cosmos/group/v1/proposals/{proposal_id}/tally',
+    adapter,
+  },
+  group_proposals_by_group_policy: {
+    url: '/cosmos/group/v1/proposals_by_group_policy/{address}',
+    adapter,
+  },
 };

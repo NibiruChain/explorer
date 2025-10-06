@@ -5,8 +5,13 @@ import type {
   Coin,
   ConnectionWithProof,
   DenomTrace,
+  Group,
+  GroupProposal,
+  GroupTallyResult,
   NodeInfo,
   PaginabledAccounts,
+  PaginatedGroupProposals,
+  PaginatedGroups,
   PaginatedIBCChannels,
   PaginatedIBCConnections,
   PaginatedTendermintValidator,
@@ -52,6 +57,22 @@ export interface AbstractRegistry {
   [key: string]: Request<any>;
 }
 
+export interface Inflation {
+  inflation_enabled: boolean;
+  polynomial_factors: string[];
+  inflation_distribution: InflationDistribution;
+  epochs_per_period: string;
+  periods_per_year: string;
+  max_period: string;
+  has_inflation_started: boolean;
+}
+
+export interface InflationDistribution {
+  staking_rewards: string;
+  community_pool: string;
+  strategic_reserves: string;
+}
+
 // use snake style, since the all return object use snake style.
 export interface RequestRegistry extends AbstractRegistry {
   auth_params: Request<any>;
@@ -81,9 +102,7 @@ export interface RequestRegistry extends AbstractRegistry {
     total: Coin[];
   }>;
 
-  mint_inflation: Request<{
-    params: { inflation_distribution: { staking_rewards: string } };
-  }>;
+  mint_inflation: Request<{ params: Inflation }>;
   mint_params: Request<{
     params: {
       mint_denom: string;
@@ -128,6 +147,13 @@ export interface RequestRegistry extends AbstractRegistry {
 
   params: Request<{ param: any }>;
 
+  group_groups: Request<PaginatedGroups>;
+  group_groups_by_admin: Request<PaginatedGroups>;
+  group_groups_by_member: Request<PaginatedGroups>;
+  group_proposal: Request<{ proposal: GroupProposal }>;
+  group_proposal_tally: Request<{ tally: GroupTallyResult }>;
+  group_proposals_by_group_policy: Request<PaginatedGroupProposals>;
+
   tx_txs: Request<PaginatedTxs>;
   tx_txs_block: Request<Tx>;
   tx_hash: Request<{ tx: Tx; tx_response: TxResponse }>;
@@ -155,6 +181,16 @@ export interface RequestRegistry extends AbstractRegistry {
   ibc_core_connection_connections_connection_id_client_state: Request<ClientStateWithProof>;
   interchain_security_ccv_provider_validator_consumer_addr: Request<{
     consumer_address: string;
+  }>;
+  interchain_security_provider_opted_in_validators: Request<{
+    validators_provider_addresses: string[];
+  }>;
+  interchain_security_consumer_validators: Request<{
+    validators: {
+      provider_address: string;
+      consumer_key: { ed25519: string };
+      power: string;
+    }[];
   }>;
 }
 
@@ -203,11 +239,10 @@ export function findApiProfileBySDKVersion(
   version: string
 ): RequestRegistry | undefined {
   let closestVersion: string | null = null;
-
+  const chain_version = version.match(/(\d+\.\d+\.?\d*)/g) || [''];
   for (const k in VERSION_REGISTRY) {
     const key = k.replace('v', '');
-    // console.log(semver.gt(key, version), semver.gte(version, key), key, version)
-    if (semver.lte(key, version)) {
+    if (semver.lte(key, chain_version[0])) {
       if (!closestVersion || semver.gt(key, closestVersion)) {
         closestVersion = k;
       }

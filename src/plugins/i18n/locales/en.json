@@ -130,6 +130,8 @@
     "no_escrowed_assets": "No Escrowed Assets",
     "contract_states": "Contract States",
     "query_contract": "Query Contract",
+    "suggested_messages": "Suggested Messages",
+    "result": "Result",
     "tips_description_1": "This feature is available when deploying contracts via WELLDONE Code. For more information, please check the document at the link below."
   },
   "gov": {
@@ -280,7 +282,7 @@
     "select_endpoint": "Select Endpoint",
     "text_1": "Import global script",
     "text_2": "Connect Wallet",
-    "text_3": "Convert"
+    "text_3": "Osmosis Convert"
   },
   "index": {
     "rank": "Rank",

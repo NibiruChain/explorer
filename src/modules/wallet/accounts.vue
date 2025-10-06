@@ -257,7 +257,7 @@ async function loadBalances(
         <div class="flex justify-self-center">
           <div class="mx-2 p-2">
             <svg
-              :fill="chainStore.current?.themeColor || '#113A48'"
+              :fill="chainStore.current?.themeColor || '#666CFF'"
               height="28px"
               width="28px"
               version="1.1"

@@ -7,8 +7,10 @@ import newFooter from '@/layouts/components/NavFooter.vue';
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue';
 import NavbarSearch from '@/layouts/components/NavbarSearch.vue';
 import ChainProfile from '@/layouts/components/ChainProfile.vue';
+import Sponsors from '@/layouts/components/Sponsors.vue';
 
 import { useDashboard } from '@/stores/useDashboard';
+import { NetworkType } from '@/types/chaindata';
 import { useBaseStore, useBlockchain } from '@/stores';
 
 import NavBarI18n from './NavBarI18n.vue';
@@ -87,9 +89,9 @@ dayjs();
     >
       <div class="flex justify-between mt-1 pl-4 py-4 mb-1">
         <RouterLink to="/" class="flex items-center">
-          <img class="w-10 h-10" src="/logos/nibiru.png" />
+          <img class="w-10 h-10" src="../../assets/logo.png" />
           <h1 class="flex-1 ml-3 text-2xl font-semibold dark:text-white">
-            Nibiru
+            Nibiru Explorer
           </h1>
         </RouterLink>
         <div
@@ -192,6 +194,29 @@ dayjs();
                 </div>
               </RouterLink>
             </div>
+            <div
+              v-if="
+                index === 0 && dashboard.networkType === NetworkType.Testnet
+              "
+              class="menu bg-base-100 w-full !p-0"
+            >
+              <RouterLink
+                class="hover:bg-gray-100 dark:hover:bg-[#373f59] rounded cursor-pointer px-3 py-2 flex items-center"
+                :to="`/${blockchain.chainName}/faucet`"
+              >
+                <Icon icon="mdi:chevron-right" class="mr-2 ml-3"></Icon>
+                <div
+                  class="text-base capitalize text-gray-500 dark:text-gray-300"
+                >
+                  Faucet
+                </div>
+                <div
+                  class="badge badge-sm text-white border-none badge-error ml-auto"
+                >
+                  New
+                </div>
+              </RouterLink>
+            </div>
           </div>
         </div>
 
@@ -248,7 +273,13 @@ dayjs();
             Wallet Helper
           </div>
         </RouterLink>
-
+        <div
+          v-if="showDiscord"
+          class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase"
+        >
+          {{ $t('module.sponsors') }}
+        </div>
+        <Sponsors v-if="showDiscord" />
         <div class="px-4 text-sm pt-2 text-gray-400 pb-2 uppercase">
           {{ $t('module.links') }}
         </div>
@@ -266,7 +297,7 @@ dayjs();
         </a>
         <a
           v-if="showDiscord"
-          href="https://discord.com/invite/CmjYVSr6GW"
+          href="https://discord.gg/7cWKZuSY6G"
           target="_blank"
           class="py-2 px-4 flex items-center rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#373f59]"
         >
@@ -340,7 +371,9 @@ dayjs();
         </div>
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in">
-            <Component :is="Component" />
+            <div>
+              <Component :is="Component" />
+            </div>
           </Transition>
         </RouterView>
       </div>

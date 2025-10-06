@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { suggestChain } from '@leapwallet/cosmos-snap-provider';
-import {
-  useDashboard,
-  type ChainConfig,
-  useBlockchain,
-  NetworkType,
-} from '@/stores';
+import { useDashboard, useBlockchain } from '@/stores';
+import type { ChainConfig } from '@/types/chaindata';
+import { NetworkType } from '@/types/chaindata';
 import { CosmosRestClient } from '@/libs/client';
 import { onMounted } from 'vue';
 

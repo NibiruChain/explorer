@@ -3,28 +3,23 @@ import { isBech32Address } from '@/libs/utils';
 import { useBlockchain, useFormatter } from '@/stores';
 import MdEditor from 'md-editor-v3';
 import { computed, onMounted, ref } from 'vue';
-import nameMatcha from '@leapwallet/name-matcha';
+
 import { fromBase64, toHex } from '@cosmjs/encoding';
+
+import { registry as nameMatcha } from '@leapwallet/name-matcha';
 
 const chainStore = useBlockchain();
 const props = defineProps(['value']);
 const format = useFormatter();
 function isMD() {
-  if (
-    props.value &&
-    (String(props.value).indexOf('\n') > -1 ||
-      String(props.value).indexOf('\\n') > -1)
-  ) {
+  if (props.value && (String(props.value).indexOf('\n') > -1 || String(props.value).indexOf('\\n') > -1)) {
     return true;
   }
   return false;
 }
 
 function isAddress() {
-  return (
-    isBech32Address(props.value) &&
-    String(props.value).indexOf('valoper1') === -1
-  );
+  return isBech32Address(props.value) && String(props.value).indexOf('valoper1') === -1;
 }
 
 const text = computed(() => {
@@ -35,8 +30,7 @@ const text = computed(() => {
       return format.validator(v) || v;
     }
     // 2023-06-12T03:09:38.253756368Z
-    case v.search(/^[1-9]\d{3}-\d{1,2}-\d{1,2}T\d{1,2}:\d{2}:\d{2}[.\d]*Z$/g) >
-      -1: {
+    case v.search(/^[1-9]\d{3}-\d{1,2}-\d{1,2}T\d{1,2}:\d{2}:\d{2}[.\d]*Z$/g) > -1: {
       return new Date(v).toLocaleString(navigator.language);
     }
     case toHexOutput.value:
@@ -45,7 +39,7 @@ const text = computed(() => {
   return v;
 });
 
-const names = ref([] as { name?: string | null; provider?: string }[]);
+const names = ref([] as { name?: any; provider?: string }[]);
 
 onMounted(() => {
   if (isAddress())
@@ -61,16 +55,9 @@ const isConvertable = computed(() => {
 });
 </script>
 <template>
-  <MdEditor
-    v-if="isMD()"
-    :model-value="format.multiLine(value)"
-    previewOnly
-    class="md-editor-recover"
-  ></MdEditor>
+  <MdEditor v-if="isMD()" :model-value="format.multiLine(value)" previewOnly class="md-editor-recover"></MdEditor>
   <span v-else-if="isAddress()" class="flex">
-    <RouterLink :to="`/${chainStore.chainName}/account/${text}`">{{
-      text
-    }}</RouterLink>
+    <RouterLink :to="`/${chainStore.chainName}/account/${text}`">{{ text }}</RouterLink>
     <div v-for="{ name, provider } in names">
       <span
         class="text-xs truncate relative py-1 px-2 p2-4 w-fit ml-2 rounded text-success tooltip"
@@ -84,11 +71,7 @@ const isConvertable = computed(() => {
   </span>
   <span v-else class="flex"
     ><span class="break-words max-w-5xl">{{ text }}</span>
-    <span
-      v-if="isConvertable"
-      @click="toHexOutput = !toHexOutput"
-      class="ml-2 cursor-pointer"
-    >
+    <span v-if="isConvertable" @click="toHexOutput = !toHexOutput" class="ml-2 cursor-pointer">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -159,7 +142,7 @@ const isConvertable = computed(() => {
     margin-bottom: 1rem;
   }
   a {
-    color: #1E90FF !important;
+    color: #666cff !important;
   }
   .h1 > a,
   .h2 > a,
