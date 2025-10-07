@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { suggestChain } from '@leapwallet/cosmos-snap-provider';
-import {
-  useDashboard,
-  useBlockchain,
-} from '@/stores';
+import { useDashboard, useBlockchain } from '@/stores';
 import type { ChainConfig } from '@/types/chaindata';
 import { NetworkType } from '@/types/chaindata';
 import { CosmosRestClient } from '@/libs/client';
 import { onMounted } from 'vue';
-import AdBanner from '@/components/ad/AdBanner.vue';
 
 const error = ref('');
 const conf = ref('');
@@ -43,7 +39,9 @@ function onchange() {
 async function initParamsForKeplr() {
   const chain = selected.value;
   if (!chain.endpoints?.rest?.at(0)) throw new Error('Endpoint does not set');
-  const client = CosmosRestClient.newDefault(chain.endpoints.rest?.at(0)?.address || '');
+  const client = CosmosRestClient.newDefault(
+    chain.endpoints.rest?.at(0)?.address || ''
+  );
   const b = await client.getBaseBlockLatest();
   const chainid = b.block.header.chain_id;
 
@@ -53,7 +51,9 @@ async function initParamsForKeplr() {
     high: 0.03,
   };
   const coinDecimals =
-    chain.assets[0].denom_units.find((x) => x.denom === chain.assets[0].symbol.toLowerCase())?.exponent || 6;
+    chain.assets[0].denom_units.find(
+      (x) => x.denom === chain.assets[0].symbol.toLowerCase()
+    )?.exponent || 6;
   conf.value = JSON.stringify(
     {
       chainId: chainid,
@@ -108,7 +108,9 @@ async function initSnap() {
   const [token] = chain.assets;
 
   if (!chain.endpoints?.rest?.at(0)) throw new Error('Endpoint does not set');
-  const client = CosmosRestClient.newDefault(chain.endpoints.rest?.at(0)?.address || '');
+  const client = CosmosRestClient.newDefault(
+    chain.endpoints.rest?.at(0)?.address || ''
+  );
   const b = await client.getBaseBlockLatest();
   const chainId = b.block.header.chain_id;
 
@@ -126,7 +128,9 @@ async function initSnap() {
         {
           coinDenom: token.display,
           coinMinimalDenom: token.base,
-          coinDecimals: token.denom_units.find((x) => x.denom === token.display)?.exponent || 6,
+          coinDecimals:
+            token.denom_units.find((x) => x.denom === token.display)
+              ?.exponent || 6,
           coinGeckoId: token.coingecko_id,
           gasPriceStep: {
             low: 0.0625,
@@ -146,9 +150,11 @@ function suggest() {
     // @ts-ignore
     if (window.keplr) {
       // @ts-ignore
-      window.keplr.experimentalSuggestChain(JSON.parse(conf.value)).catch((e) => {
-        error.value = e;
-      });
+      window.keplr
+        .experimentalSuggestChain(JSON.parse(conf.value))
+        .catch((e: string) => {
+          error.value = e;
+        });
     }
   } else {
     suggestChain(JSON.parse(conf.value));
@@ -163,34 +169,55 @@ function suggest() {
         <option :value="NetworkType.Mainnet">Mainnet</option>
         <option :value="NetworkType.Testnet">Testnet</option>
       </select>
-      <select v-model="selected" class="select select-bordered mx-5" @change="onchange">
+      <select
+        v-model="selected"
+        class="select select-bordered mx-5"
+        @change="onchange"
+      >
         <option v-for="c in chains" :value="c">
           {{ c.chainName }}
         </option>
       </select>
       <label
-        ><input type="radio" v-model="wallet" value="keplr" class="radio radio-bordered" @change="onchange" />
+        ><input
+          type="radio"
+          v-model="wallet"
+          value="keplr"
+          class="radio radio-bordered"
+          @change="onchange"
+        />
         Keplr</label
       >
       <label
-        ><input type="radio" v-model="wallet" value="metamask" class="radio radio-bordered ml-4" @change="onchange" />
+        ><input
+          type="radio"
+          v-model="wallet"
+          value="metamask"
+          class="radio radio-bordered ml-4"
+          @change="onchange"
+        />
         Metamask</label
       >
     </div>
     <div class="text-main mt-5">
-      <textarea v-model="conf" class="textarea textarea-bordered w-full" rows="15"></textarea>
+      <textarea
+        v-model="conf"
+        class="textarea textarea-bordered w-full"
+        rows="15"
+      ></textarea>
     </div>
     <div class="mt-4 mb-4">
-      <button class="btn !bg-primary !border-primary text-white mr-2" @click="suggest">
+      <button
+        class="btn !bg-primary !border-primary text-white mr-2"
+        @click="suggest"
+      >
         Suggest {{ selected.chainName }} TO {{ wallet }}
       </button>
 
       <div class="mt-4">
-        If the chain is not offically support on Keplr/Metamask Snap, you can submit these parameters to enable
-        Keplr/Metamask Snap.
+        If the chain is not offically support on Keplr/Metamask Snap, you can
+        submit these parameters to enable Keplr/Metamask Snap.
       </div>
     </div>
-
-    <AdBanner id="suggest-banner-ad" unit="banner" width="970px" height="90px" />
   </div>
 </template>

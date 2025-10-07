@@ -1,0 +1,43 @@
+{
+  "chain_name": "cataclysm-1",
+  "registry_name": "cataclysm-1",
+  "api": [
+    {
+      "address": "https://lcd.archive.nibiru.fi",
+      "provider": "Nibiru",
+      "archive": false
+    },
+    {
+      "address": "https://lcd.nibiru.fi",
+      "provider": "Nibiru",
+      "archive": false
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://rpc.archive.nibiru.fi",
+      "provider": "Nibiru",
+      "archive": false
+    },
+    {
+      "address": "https://rpc.nibiru.fi",
+      "provider": "Nibiru",
+      "archive": false
+    }
+  ],
+  "sdk_version": "0.45.5",
+  "coin_type": "118",
+  "min_tx_fee": "2500",
+  "addr_prefix": "nibi",
+  "logo": "https://raw.githubusercontent.com/cosmos/chain-registry/master/nibiru/images/nibiru.svg",
+  "theme_color": "#F294C0",
+  "assets": [
+    {
+      "base": "unibi",
+      "symbol": "NIBI",
+      "exponent": "6",
+      "coingecko_id": "nibiru",
+      "logo": "https://raw.githubusercontent.com/cosmos/chain-registry/master/nibiru/images/nibiru.svg"
+    }
+  ]
+}

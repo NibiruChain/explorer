@@ -9,10 +9,14 @@ import DonutChart from '@/components/charts/DonutChart.vue';
 import ApexCharts from 'vue3-apexcharts';
 import { get } from '@/libs';
 import { getMarketPriceChartConfig } from '@/components/charts/apexChartConfig';
-import AdBanner from '@/components/ad/AdBanner.vue';
 
 const format = useFormatter();
-const conf = ref(JSON.parse(localStorage.getItem('imported-addresses') || '{}') as Record<string, AccountEntry[]>);
+const conf = ref(
+  JSON.parse(localStorage.getItem('imported-addresses') || '{}') as Record<
+    string,
+    AccountEntry[]
+  >
+);
 const chainStore = useBlockchain();
 const balances = ref({} as Record<string, Coin[]>);
 const delegations = ref({} as Record<string, Delegation[]>);
@@ -70,7 +74,9 @@ Object.values(conf.value).forEach((imported) => {
       if (x.endpoint && x.address) {
         loading.value += 1;
         const endpoint = chainStore.randomEndpoint(x.chainName);
-        const client = CosmosRestClient.newDefault(endpoint?.address || x.endpoint);
+        const client = CosmosRestClient.newDefault(
+          endpoint?.address || x.endpoint
+        );
         client
           .getBankBalances(x.address)
           .then((res) => {
@@ -84,7 +90,8 @@ Object.values(conf.value).forEach((imported) => {
             loaded.value += 1;
           });
         client.getStakingDelegations(x.address).then((res) => {
-          if (res && res.delegation_responses) delegations.value[x.address || ''] = res.delegation_responses;
+          if (res && res.delegation_responses)
+            delegations.value[x.address || ''] = res.delegation_responses;
           res.delegation_responses.forEach((del) => {
             tokenMeta.value[del.balance.denom] = x;
           });
@@ -102,7 +109,11 @@ const tokenQty = computed(() => {
         if (values[coin.denom]) {
           values[coin.denom].qty += v;
         } else {
-          values[coin.denom] = { qty: v, coinId: format.findGlobalAssetConfig(coin.denom)?.coingecko_id || '' };
+          values[coin.denom] = {
+            qty: v,
+            coinId:
+              format.findGlobalAssetConfig(coin.denom)?.coingecko_id || '',
+          };
         }
       }
     });
@@ -116,7 +127,8 @@ const tokenQty = computed(() => {
         } else {
           values[d.balance.denom] = {
             qty: v,
-            coinId: format.findGlobalAssetConfig(d.balance.denom)?.coingecko_id || '',
+            coinId:
+              format.findGlobalAssetConfig(d.balance.denom)?.coingecko_id || '',
           };
         }
       }
@@ -186,7 +198,9 @@ const changeData = computed(() => {
       const token = tokenQty.value[denom];
       const marketData: any = prices.value.find((x) => x.id === token.coinId);
       if (marketData) {
-        return marketData.sparkline_in_7d?.price.map((p: number) => p * token.qty) as number[];
+        return marketData.sparkline_in_7d?.price.map(
+          (p: number) => p * token.qty
+        ) as number[];
       }
       return [];
     })
@@ -244,11 +258,19 @@ const currencySign = computed(() => {
   <div class="overflow-x-auto w-full rounded-md">
     <div class="flex flex-wrap justify-between bg-base-100 p-5">
       <div class="min-w-0">
-        <h2 class="text-2xl font-bold leading-7 sm:!truncate sm:!text-3xl sm:!tracking-tight">Portfolio</h2>
+        <h2
+          class="text-2xl font-bold leading-7 sm:!truncate sm:!text-3xl sm:!tracking-tight"
+        >
+          Portfolio
+        </h2>
         <div>
           <div class="flex items-center text-sm">
             Currency:
-            <select v-model="currency" @change="loadPrice" class="ml-1 uppercase">
+            <select
+              v-model="currency"
+              @change="loadPrice"
+              class="ml-1 uppercase"
+            >
               <option>usd</option>
               <option>cny</option>
               <option>eur</option>
@@ -284,7 +306,11 @@ const currencySign = computed(() => {
           <DonutChart
             height="280"
             :series="Object.values(tokenValues)"
-            :labels="Object.keys(tokenValues).map((x) => format.tokenDisplayDenom(x)?.toUpperCase())"
+            :labels="
+              Object.keys(tokenValues).map((x) =>
+                format.tokenDisplayDenom(x)?.toUpperCase()
+              )
+            "
           />
         </div>
         <div class="md:col-span-2">
@@ -297,7 +323,6 @@ const currencySign = computed(() => {
         </div>
       </div>
       <div class="overflow-x-auto mt-4">
-        <AdBanner class="bg-base-200" id="portfolio-banner-ad" unit="banner" width="970px" height="90px" />
         <table class="table w-full">
           <thead class="bg-base-200">
             <tr>
@@ -315,7 +340,10 @@ const currencySign = computed(() => {
                       <img :src="x.logo" :alt="x.chainName" />
                     </div>
                   </div>
-                  <span class="uppercase font-bold text-lg">{{ format.tokenDisplayDenom(x.denom) }}</span> @
+                  <span class="uppercase font-bold text-lg">{{
+                    format.tokenDisplayDenom(x.denom)
+                  }}</span>
+                  @
                   <span class="capitalize">{{ x.chainName }} </span>
                 </div>
               </td>

@@ -1,9 +1,15 @@
 import { defineStore } from 'pinia';
 import { get } from '@/libs/http';
-import type { ChainConfig, DirectoryChainConfig, Endpoint, LocalChainConfig } from '@/types/chaindata';
+import type {
+  ChainConfig,
+  DirectoryChainConfig,
+  Endpoint,
+  LocalChainConfig,
+} from '@/types/chaindata';
 import { ConfigSource, NetworkType } from '@/types/chaindata';
 import { useBlockchain } from './useBlockchain';
 import { coingeckoUrl } from '@/stores';
+import { getNibiruChains } from '@/nibiru';
 
 function apiConverter(api: any[]) {
   if (!api) return [];
@@ -43,8 +49,10 @@ export function convertFromLocal(lc: LocalChainConfig): ChainConfig {
     cosmosSdk: lc.sdk_version,
   };
   conf.bech32Prefix = lc.addr_prefix;
-  conf.bech32ConsensusPrefix = lc.consensus_prefix ?? lc.addr_prefix + 'valcons';
+  conf.bech32ConsensusPrefix =
+    lc.consensus_prefix ?? lc.addr_prefix + 'valcons';
   conf.chainName = lc.chain_name;
+  conf.networkType = lc.network_type;
   conf.coinType = lc.coin_type;
   conf.prettyName = lc.registry_name || lc.chain_name;
   conf.endpoints = {
@@ -58,7 +66,9 @@ export function convertFromLocal(lc: LocalChainConfig): ChainConfig {
     };
   }
   conf.features = lc.features;
-  conf.logo = lc.logo.startsWith('http') ? lc.logo : `https://ping.pub${lc.logo}`;
+  conf.logo = lc.logo.startsWith('http')
+    ? lc.logo
+    : `https://ping.pub${lc.logo}`;
   conf.keplrFeatures = lc.keplr_features;
   conf.keplrPriceStep = lc.keplr_price_step;
   conf.themeColor = lc.theme_color;
@@ -66,27 +76,33 @@ export function convertFromLocal(lc: LocalChainConfig): ChainConfig {
   return conf;
 }
 
-export function convertFromDirectory(source: DirectoryChainConfig): ChainConfig {
+export function convertFromDirectory(
+  source: DirectoryChainConfig
+): ChainConfig {
   const conf = {} as ChainConfig;
-  (conf.assets = source.assets),
+  ((conf.assets = source.assets),
     (conf.bech32Prefix = source.bech32_prefix),
     (conf.bech32ConsensusPrefix = source.bech32_prefix + 'valcons'),
     (conf.chainId = source.chain_id),
     (conf.chainName = source.chain_name),
     (conf.prettyName = source.pretty_name),
+    (conf.networkType = source.network_type),
     (conf.versions = {
       application: source.versions?.application_version || '',
       cosmosSdk: source.versions?.cosmos_sdk_version || '',
       tendermint: source.versions?.tendermint_version || '',
     }),
-    (conf.logo = pathConvert(source.image));
+    (conf.logo = pathConvert(source.image)));
   conf.endpoints = source.best_apis;
   return conf;
 }
 
 function pathConvert(path: string | undefined) {
   if (path) {
-    path = path.replace('https://raw.githubusercontent.com/cosmos/chain-registry/master', 'https://registry.ping.pub');
+    path = path.replace(
+      'https://raw.githubusercontent.com/cosmos/chain-registry/master',
+      'https://registry.ping.pub'
+    );
   }
   return path || '';
 }
@@ -138,15 +154,20 @@ export enum LoadingStatus {
 
 export const useDashboard = defineStore('dashboard', {
   state: () => {
-    const favMap = JSON.parse(localStorage.getItem('favoriteMap') || '{"cataclysm-1":true}');
+    const favMap = JSON.parse(
+      localStorage.getItem('favoriteMap') || '{"cosmos":true, "osmosis":true}'
+    );
     return {
       status: LoadingStatus.Empty,
-      source: "https://networks.nibiru.fi",
+      source: ConfigSource.MainnetCosmosDirectory,
       networkType: NetworkType.Mainnet,
       favoriteMap: favMap as Record<string, boolean>,
       chains: {} as Record<string, ChainConfig>,
       prices: {} as Record<string, any>,
-      coingecko: {} as Record<string, { coinId: string; exponent: number; symbol: string }>,
+      coingecko: {} as Record<
+        string,
+        { coinId: string; exponent: number; symbol: string }
+      >,
     };
   },
   getters: {
@@ -156,8 +177,8 @@ export const useDashboard = defineStore('dashboard', {
   },
   actions: {
     async initial() {
-      // await this.loadingFromLocal();
-      await this.loadingFromRegistry()
+      await this.loadingFromLocal();
+      //await this.loadingFromRegistry()
     },
     loadingPrices() {
       const coinIds = [] as string[];
@@ -209,6 +230,11 @@ export const useDashboard = defineStore('dashboard', {
           : import.meta.glob('../../chains/testnet/*.json', { eager: true });
       Object.values<LocalChainConfig>(source).forEach((x: LocalChainConfig) => {
         this.chains[x.chain_name] = convertFromLocal(x);
+        if (!this.chains[x.chain_name].networkType) {
+          this.chains[x.chain_name].networkType = this.networkType
+            .toString()
+            .toLowerCase();
+        }
       });
       this.setupDefault();
       this.status = LoadingStatus.Loaded;
@@ -221,6 +247,9 @@ export const useDashboard = defineStore('dashboard', {
           : import.meta.glob('../../chains/testnet/*.json', { eager: true });
       Object.values<LocalChainConfig>(source).forEach((x: LocalChainConfig) => {
         config[x.chain_name] = convertFromLocal(x);
+        if (!config[x.chain_name].networkType) {
+          config[x.chain_name].networkType = network.toString().toLowerCase();
+        }
       });
       return config;
     },
@@ -229,7 +258,11 @@ export const useDashboard = defineStore('dashboard', {
         const blockchain = useBlockchain();
         const keys = Object.keys(this.favoriteMap);
         for (let i = 0; i < keys.length; i++) {
-          if (!blockchain.chainName && this.chains[keys[i]] && this.favoriteMap[keys[i]]) {
+          if (
+            !blockchain.chainName &&
+            this.chains[keys[i]] &&
+            this.favoriteMap[keys[i]]
+          ) {
             blockchain.setCurrent(keys[i]);
             break;
           }

@@ -95,7 +95,10 @@ function fetchSourceCode() {
       console.log('source codes:', x);
       for (let i = 0; i < x.sourceCodes.length; i++) {
         const sc = x.sourceCodes[i];
-        sc.sourceCode = await codeToHtml(sc.sourceCode, { lang: sc.path.endsWith('.toml') ? 'toml' : 'rust', theme });
+        sc.sourceCode = await codeToHtml(sc.sourceCode, {
+          lang: sc.path.endsWith('.toml') ? 'toml' : 'rust',
+          theme,
+        });
       }
       sourceCode.value = x.sourceCodes;
     })
@@ -136,7 +139,10 @@ function selectTab(tabName: string) {
 
 const executions = computed(() => {
   return schemas.value
-    .filter((x) => x.path.indexOf('execute_msg') > -1 || x.path.indexOf('query_msg') > -1)
+    .filter(
+      (x) =>
+        x.path.indexOf('execute_msg') > -1 || x.path.indexOf('query_msg') > -1
+    )
     .map((x) => JSON.parse(x.sourceCode || '{}') as Schema);
   // if(raw && raw.sourceCode) {
   //   return JSON.parse(raw.sourceCode) as Schema
@@ -160,7 +166,9 @@ function callFunction(title: string, method: string, arg: Argument) {
   let args = {} as Record<string, any>;
   if (arg.properties)
     Object.keys(arg.properties).forEach((k) => {
-      const input = document.querySelector(`input[name="${method}-${k}"]`) as HTMLInputElement;
+      const input = document.querySelector(
+        `input[name="${method}-${k}"]`
+      ) as HTMLInputElement;
       if (input) {
         args[k] = input.value;
       }
@@ -172,7 +180,10 @@ function callFunction(title: string, method: string, arg: Argument) {
     let execution = {} as Record<string, any>;
     execution[method] = args;
     console.log('execution', execution);
-    dialog.open('wasm_execute_contract', { contract: props.contract, execution });
+    dialog.open('wasm_execute_contract', {
+      contract: props.contract,
+      execution,
+    });
   } else {
     // QueryMsg
     wasmStore.wasmClient
@@ -192,34 +203,63 @@ function callFunction(title: string, method: string, arg: Argument) {
 <template>
   <div class="bg-base-100 px-4 pt-3 pb-4 rounded mb-4 shadow">
     <div role="tablist" class="tabs tabs-boxed">
-      <a role="tab" class="tab tooltip tooltip-right tooltip-success" data-tip="Powered By WELLDONE Studio">
+      <a
+        role="tab"
+        class="tab tooltip tooltip-right tooltip-success"
+        data-tip="Powered By WELLDONE Studio"
+      >
         <div class="w-8 rounded">
-          <img src="../assets/images/welldone-logo.svg" alt="Powered By WELLDONE Studio" />
+          <img
+            src="../assets/images/welldone-logo.png"
+            alt="Powered By WELLDONE Studio"
+          />
         </div>
       </a>
-      <a role="tab" class="tab" :class="{ 'tab-active': tab === 'verification' }" @click="selectTab('verification')"
+      <a
+        role="tab"
+        class="tab"
+        :class="{ 'tab-active': tab === 'verification' }"
+        @click="selectTab('verification')"
         >Verification</a
       >
-      <a role="tab" class="tab" :class="{ 'tab-active': tab === 'executions' }" @click="selectTab('executions')"
+      <a
+        role="tab"
+        class="tab"
+        :class="{ 'tab-active': tab === 'executions' }"
+        @click="selectTab('executions')"
         >Functions</a
       >
-      <a role="tab" class="tab" :class="{ 'tab-active': tab === 'source_code' }" @click="selectTab('source_code')"
+      <a
+        role="tab"
+        class="tab"
+        :class="{ 'tab-active': tab === 'source_code' }"
+        @click="selectTab('source_code')"
         >Source Code</a
       >
     </div>
     <div class="">
-      <div v-if="tab === 'verification'"><DynamicComponent :value="verification" /></div>
+      <div v-if="tab === 'verification'">
+        <DynamicComponent :value="verification" />
+      </div>
       <div v-if="tab === 'executions'" class="">
-        <div v-for="{ title, oneOf } in executions" class="join join-vertical w-full mt-2">
+        <div
+          v-for="{ title, oneOf } in executions"
+          class="join join-vertical w-full mt-2"
+        >
           <div v-if="oneOf" v-for="m in oneOf">
             <div
               v-for="(props, method) in m.properties"
               class="collapse collapse-arrow join-item border border-base-300"
             >
               <input type="radio" name="my-accordion-1" :checked="false" />
-              <div class="collapse-title font-medium">{{ title }}::{{ method }}</div>
+              <div class="collapse-title font-medium">
+                {{ title }}::{{ method }}
+              </div>
               <div class="collapse-content">
-                <div v-for="(p, name) in props.properties" class="form-control pb-2">
+                <div
+                  v-for="(p, name) in props.properties"
+                  class="form-control pb-2"
+                >
                   <label class="label">
                     <span class="label-text">{{ name }}</span>
                     <span></span>
@@ -239,7 +279,12 @@ function callFunction(title: string, method: string, arg: Argument) {
                     @click="callFunction(title, method, props)"
                     >{{ method }}</label
                   >
-                  <label v-else class="btn btn-sm" @click="callFunction(title, method, props)">{{ method }}</label>
+                  <label
+                    v-else
+                    class="btn btn-sm"
+                    @click="callFunction(title, method, props)"
+                    >{{ method }}</label
+                  >
                 </div>
                 <div v-if="result[`${title}-${method}`]" class="mt-2">
                   <JsonViewer
@@ -264,12 +309,17 @@ function callFunction(title: string, method: string, arg: Argument) {
         >
           <input type="radio" name="sourceCodeAccordion" :checked="false" />
           <div class="collapse-title font-medium">{{ sc.path }}</div>
-          <div class="collapse-content overflow-auto" v-html="sc.sourceCode"></div>
+          <div
+            class="collapse-content overflow-auto"
+            v-html="sc.sourceCode"
+          ></div>
         </div>
       </div>
     </div>
     <div v-show="tab === 'verification'" class="text-center">
-      <div v-if="Object.keys(verification).length == 0">Haven't found verification</div>
+      <div v-if="Object.keys(verification).length == 0">
+        Haven't found verification
+      </div>
       <button
         class="btn btn-primary mt-5"
         @click="verify"
@@ -281,8 +331,13 @@ function callFunction(title: string, method: string, arg: Argument) {
     </div>
 
     <!-- alert-info -->
-    <div class="text-[#00cfe8] bg-[rgba(0,207,232,0.12)] rounded shadow mt-4 alert-info">
-      <div class="drop-shadow-md px-4 pt-2 pb-2" style="box-shadow: rgba(0, 207, 232, 0.4) 0px 6px 15px -7px">
+    <div
+      class="text-[#00cfe8] bg-[rgba(0,207,232,0.12)] rounded shadow mt-4 alert-info"
+    >
+      <div
+        class="drop-shadow-md px-4 pt-2 pb-2"
+        style="box-shadow: rgba(0, 207, 232, 0.4) 0px 6px 15px -7px"
+      >
         <h2 class="text-base font-semibold">{{ $t('consensus.tips') }}</h2>
       </div>
       <div class="px-4 py-4">
@@ -291,7 +346,9 @@ function callFunction(title: string, method: string, arg: Argument) {
             {{ $t('cosmwasm.tips_description_1') }}
           </li>
           <li>
-            <a href="https://docs.welldonestudio.io/code/verification-api/" target="_blank"
+            <a
+              href="https://docs.welldonestudio.io/code/verification-api/"
+              target="_blank"
               >Link to Verification API Manual</a
             >
           </li>

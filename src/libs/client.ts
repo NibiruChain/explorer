@@ -23,7 +23,12 @@ export class BaseRestClient<R extends AbstractRegistry> {
     this.registry = registry;
     this.version = version || 'v0.40';
   }
-  async request<T>(request: Request<T>, args: Record<string, any>, query = '', adapter?: (source: any) => Promise<T>) {
+  async request<T>(
+    request: Request<T>,
+    args: Record<string, any>,
+    query = '',
+    adapter?: (source: any) => Promise<T>
+  ) {
     let url = `${request.url.startsWith('http') ? '' : this.endpoint}${request.url}${query}`;
     Object.keys(args).forEach((k) => {
       url = url.replace(`{${k}}`, args[k] || '');
@@ -41,7 +46,10 @@ export class BaseRestClient<R extends AbstractRegistry> {
 
 // dynamic all custom request implementations
 function registeCustomRequest() {
-  const extensions: Record<string, any> = import.meta.glob('./api/customization/*.ts', { eager: true });
+  const extensions: Record<string, any> = import.meta.glob(
+    './api/customization/*.ts',
+    { eager: true }
+  );
   Object.values(extensions).forEach((m) => {
     if (m.store === 'version') {
       registryVersionProfile(m.name, withCustomRequest(DEFAULT, m.requests));
@@ -60,7 +68,9 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
 
   static newStrategy(endpoint: string, chain: any) {
     // sdk version of current chain
-    const ver = localStorage.getItem(`sdk_version_${chain.chainName}`) || chain.versions?.cosmosSdk;
+    const ver =
+      localStorage.getItem(`sdk_version_${chain.chainName}`) ||
+      chain.versions?.cosmosSdk;
     let profile;
     if (chain) {
       // find by name first
@@ -100,11 +110,16 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
   async getBankSupplyByDenom(denom: string) {
     let supply;
     try {
-      supply = await this.request(this.registry.bank_supply_by_denom, { denom });
+      supply = await this.request(this.registry.bank_supply_by_denom, {
+        denom,
+      });
     } catch (err) {
       // will move this to sdk version profile later
       supply = await this.request(
-        { url: '/cosmos/bank/v1beta1/supply/by_denom?denom={denom}', adapter } as Request<{ amount: Coin }>,
+        {
+          url: '/cosmos/bank/v1beta1/supply/by_denom?denom={denom}',
+          adapter,
+        } as Request<{ amount: Coin }>,
         { denom }
       );
     }
@@ -128,7 +143,10 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
     });
   }
   async getDistributionValidatorOutstandingRewards(validator_address: string) {
-    return this.request(this.registry.distribution_validator_outstanding_rewards, { validator_address });
+    return this.request(
+      this.registry.distribution_validator_outstanding_rewards,
+      { validator_address }
+    );
   }
   async getDistributionValidatorSlashes(validator_address: string) {
     return this.request(this.registry.distribution_validator_slashes, {
@@ -172,22 +190,32 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
     return this.request(this.registry.gov_proposals_deposits, { proposal_id });
   }
   async getGovProposalTally(proposal_id: string) {
-    return this.request(this.registry.gov_proposals_tally, { proposal_id }, undefined, (source: any) => {
-      return Promise.resolve({
-        tally: {
-          yes: source.tally.yes || source.tally.yes_count,
-          abstain: source.tally.abstain || source.tally.abstain_count,
-          no: source.tally.no || source.tally.no_count,
-          no_with_veto: source.tally.no_with_veto || source.tally.no_with_veto_count,
-        },
-      });
-    });
+    return this.request(
+      this.registry.gov_proposals_tally,
+      { proposal_id },
+      undefined,
+      (source: any) => {
+        return Promise.resolve({
+          tally: {
+            yes: source.tally.yes || source.tally.yes_count,
+            abstain: source.tally.abstain || source.tally.abstain_count,
+            no: source.tally.no || source.tally.no_count,
+            no_with_veto:
+              source.tally.no_with_veto || source.tally.no_with_veto_count,
+          },
+        });
+      }
+    );
   }
   async getGovProposalVotes(proposal_id: string, page?: PageRequest) {
     if (!page) page = new PageRequest();
     page.reverse = true;
     const query = `?proposal_status={status}&${page.toQueryString()}`;
-    return this.request(this.registry.gov_proposals_votes, { proposal_id }, query);
+    return this.request(
+      this.registry.gov_proposals_votes,
+      { proposal_id },
+      query
+    );
   }
   async getGovProposalVotesVoter(proposal_id: string, voter: string) {
     return this.request(this.registry.gov_proposals_votes_voter, {
@@ -228,7 +256,10 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
       validator_addr,
     });
   }
-  async getStakingValidatorsDelegations(validator_addr: string, page?: PageRequest) {
+  async getStakingValidatorsDelegations(
+    validator_addr: string,
+    page?: PageRequest
+  ) {
     if (!page) {
       page = new PageRequest();
       // page.reverse = true
@@ -244,14 +275,26 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
       query
     );
   }
-  async getStakingValidatorsDelegationsDelegator(validator_addr: string, delegator_addr: string) {
-    return this.request(this.registry.staking_validators_delegations_delegator, { validator_addr, delegator_addr });
+  async getStakingValidatorsDelegationsDelegator(
+    validator_addr: string,
+    delegator_addr: string
+  ) {
+    return this.request(
+      this.registry.staking_validators_delegations_delegator,
+      { validator_addr, delegator_addr }
+    );
   }
-  async getStakingValidatorsDelegationsUnbonding(validator_addr: string, delegator_addr: string) {
-    return this.request(this.registry.staking_validators_delegations_unbonding_delegations, {
-      validator_addr,
-      delegator_addr,
-    });
+  async getStakingValidatorsDelegationsUnbonding(
+    validator_addr: string,
+    delegator_addr: string
+  ) {
+    return this.request(
+      this.registry.staking_validators_delegations_unbonding_delegations,
+      {
+        validator_addr,
+        delegator_addr,
+      }
+    );
   }
 
   //tendermint
@@ -279,7 +322,11 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
   }
   async getBaseValidatorsetLatest(offset: number) {
     const query = `?pagination.limit=100&pagination.offset=${offset}`;
-    return this.request(this.registry.base_tendermint_validatorsets_latest, {}, query);
+    return this.request(
+      this.registry.base_tendermint_validatorsets_latest,
+      {},
+      query
+    );
   }
   // tx
   async getTxsBySender(sender: string, page?: PageRequest) {
@@ -301,9 +348,17 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
     if (!page) page = new PageRequest();
     if (semver.gte(this.version.replaceAll('v', ''), '0.50.0')) {
       let query_edit = query.replaceAll('events=', 'query=');
-      return this.request(this.registry.tx_txs, params, `${query_edit}&${page.toQueryString()}`);
+      return this.request(
+        this.registry.tx_txs,
+        params,
+        `${query_edit}&${page.toQueryString()}`
+      );
     } else {
-      return this.request(this.registry.tx_txs, params, `${query}&${page.toQueryString()}`);
+      return this.request(
+        this.registry.tx_txs,
+        params,
+        `${query}&${page.toQueryString()}`
+      );
     }
   }
   async getTxsAt(height: string | number) {
@@ -333,13 +388,23 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
   async getIBCConnections(page?: PageRequest) {
     if (!page) page = new PageRequest();
     const query = `?${page.toQueryString()}`;
-    return this.request(this.registry.ibc_core_connection_connections, {}, query);
+    return this.request(
+      this.registry.ibc_core_connection_connections,
+      {},
+      query
+    );
   }
   async getIBCConnectionsById(connection_id: string) {
-    return this.request(this.registry.ibc_core_connection_connections_connection_id, { connection_id });
+    return this.request(
+      this.registry.ibc_core_connection_connections_connection_id,
+      { connection_id }
+    );
   }
   async getIBCConnectionsClientState(connection_id: string) {
-    return this.request(this.registry.ibc_core_connection_connections_connection_id_client_state, { connection_id });
+    return this.request(
+      this.registry.ibc_core_connection_connections_connection_id_client_state,
+      { connection_id }
+    );
   }
   async getIBCConnectionsChannels(connection_id: string) {
     return this.request(this.registry.ibc_core_channel_connections_channels, {
@@ -350,7 +415,10 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
     return this.request(this.registry.ibc_core_channel_channels, {});
   }
   async getIBCChannelAcknowledgements(channel_id: string, port_id: string) {
-    return this.request(this.registry.ibc_core_channel_channels_acknowledgements, { channel_id, port_id });
+    return this.request(
+      this.registry.ibc_core_channel_channels_acknowledgements,
+      { channel_id, port_id }
+    );
   }
   async getIBCChannelNextSequence(channel_id: string, port_id: string) {
     return this.request(this.registry.ibc_core_channel_channels_next_sequence, {
@@ -358,16 +426,27 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
       port_id,
     });
   }
-  async getInterchainSecurityValidatorRotatedKey(chain_id: string, provider_address: string) {
-    return this.request(this.registry.interchain_security_ccv_provider_validator_consumer_addr, {
-      chain_id,
-      provider_address,
-    });
+  async getInterchainSecurityValidatorRotatedKey(
+    chain_id: string,
+    provider_address: string
+  ) {
+    return this.request(
+      this.registry.interchain_security_ccv_provider_validator_consumer_addr,
+      {
+        chain_id,
+        provider_address,
+      }
+    );
   }
   async getInterchainSecurityProviderOptedInValidators(chain_id: string) {
-    return this.request(this.registry.interchain_security_provider_opted_in_validators, { chain_id });
+    return this.request(
+      this.registry.interchain_security_provider_opted_in_validators,
+      { chain_id }
+    );
   }
   async getInterchainSecurityConsumerValidators(chain_id: string) {
-    return this.request(this.registry.interchain_security_consumer_validators, { chain_id });
+    return this.request(this.registry.interchain_security_consumer_validators, {
+      chain_id,
+    });
   }
 }

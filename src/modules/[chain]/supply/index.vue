@@ -15,7 +15,15 @@ const props = defineProps(['chain']);
 const format = useFormatter();
 const chainStore = useBlockchain();
 
-const list = ref([] as { denom: string; amount: string; base: string; info: string; logo: string | undefined }[]);
+const list = ref(
+  [] as {
+    denom: string;
+    amount: string;
+    base: string;
+    info: string;
+    logo: string | undefined;
+  }[]
+);
 
 const pageRequest = ref(new PageRequest());
 const pageResponse = ref({} as Pagination);
@@ -39,7 +47,10 @@ function findGlobalAssetConfig(denom: string) {
   return undefined;
 }
 
-async function mergeDenomMetadata(denom: string, denomsMetadatas: DenomMetadata[]): Promise<SupplyAsset> {
+async function mergeDenomMetadata(
+  denom: string,
+  denomsMetadatas: DenomMetadata[]
+): Promise<SupplyAsset> {
   const denomMetadata = denomsMetadatas.find((d) => d.base.endsWith(denom));
   let asset = findGlobalAssetConfig(denom) as SupplyAsset;
   if (asset && denomMetadata) {
@@ -55,17 +66,24 @@ async function mergeDenomMetadata(denom: string, denomsMetadatas: DenomMetadata[
 function pageload(p: number) {
   pageRequest.value.setPage(p);
   chainStore.rpc.getBankDenomMetadata().then(async (denomsMetaResponse) => {
-    const bankSupplyResponse = await chainStore.rpc.getBankSupply(pageRequest.value);
+    const bankSupplyResponse = await chainStore.rpc.getBankSupply(
+      pageRequest.value
+    );
     list.value = await Promise.all(
       bankSupplyResponse.supply.map(async (coin: Coin) => {
-        const asset = await mergeDenomMetadata(coin.denom, denomsMetaResponse.metadatas);
+        const asset = await mergeDenomMetadata(
+          coin.denom,
+          denomsMetaResponse.metadatas
+        );
         const denom = asset?.symbol || coin.denom;
         return {
           denom: denom.split('/')[denom.split('/').length - 1].toUpperCase(),
-          amount: format.tokenAmountNumber({ amount: coin.amount, denom: denom }).toString(),
-          base: asset.base || coin.denom,
-          info: asset.display || coin.denom,
-          logo: asset?.logo_URIs?.svg || asset?.logo_URIs?.png || '/logo.svg',
+          amount: format
+            .tokenAmountNumber({ amount: coin.amount, denom: denom })
+            .toString(),
+          base: asset?.base || coin.denom,
+          info: asset?.display || coin.denom,
+          logo: asset?.logo_URIs?.svg || asset?.logo_URIs?.png || '/logo.png',
         };
       })
     );
